@@ -1,7 +1,5 @@
 # Fluid Truck Helm Charts
 
-![Release Charts](https://github.com/fluidtruck/helm-charts/workflows/Release%20Charts/badge.svg)
-
 ## Usage
 
 [Helm](https://helm.sh) must be installed to use the charts.
