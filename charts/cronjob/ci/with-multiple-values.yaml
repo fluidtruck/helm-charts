@@ -1,0 +1,9 @@
+cronjobs:
+  - name: hello
+    schedule: "*/1 * * * *"
+    command: date; echo Hello
+  - name: hello2
+    schedule: "*/1 * * * *"
+    command:
+      - echo
+      - Hello

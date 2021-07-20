@@ -1,0 +1,12 @@
+cronjobs:
+  - name: hello
+    schedule: "*/1 * * * *"
+    image:
+      registry: docker.io
+      repository: alpine
+      tag: latest
+    command:
+      - sh
+      - -c
+      - "date; echo Hello"
+    successfulJobsHistoryLimit: 3
