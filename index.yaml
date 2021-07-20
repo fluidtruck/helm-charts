@@ -4,7 +4,8 @@ entries:
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2021-07-19T19:21:47.981853592Z"
-    description: A Library Helm Chart for grouping common logic between Fluid Truck charts. This chart is not deployable by itself.
+    description: A Library Helm Chart for grouping common logic between Fluid Truck
+      charts. This chart is not deployable by itself.
     digest: afe9f7235e4d8b1882c52144d7c9425533822ce545f46170259d5ae288e83fa1
     home: https://github.com/fluidtruck/helm-charts/tree/main/charts/common
     icon: https://storage.googleapis.com/fluid-tidal-assets-stage/mclovin.jpg
@@ -25,4 +26,39 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/common-1.0.0/common-1.0.0.tgz
     version: 1.0.0
-generated: "2021-07-19T19:21:47.733309884Z"
+  golang:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2021-07-20T16:43:58.897983109Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - postgresql
+      version: 10.6.0
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - redis
+      version: 14.7.2
+    description: A chart for Golang.
+    digest: 90067cf3008a69484967f737e074622ecfbec7d6856c444a1747251528a924ad
+    icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
+    keywords:
+    - go
+    maintainers:
+    - email: aellis@fluidtruck.com
+      name: ellisio
+    name: golang
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/golang-1.0.0/golang-1.0.0.tgz
+    version: 1.0.0
+generated: "2021-07-20T16:43:58.897996609Z"
