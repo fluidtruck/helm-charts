@@ -27,7 +27,7 @@ spec:
         {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
         {{- end }}
         {{- if .Values.vault.enabled }}
-        vault.hashicorp.com/role: {{ template "common.names.fullname" . }}-vault
+        vault.hashicorp.com/role: {{ include "common.names.fullname" . }}
         vault.hashicorp.com/agent-inject: "true"
         {{- range .Values.vault.secrets -}}
         {{- printf "vault.hashicorp.com/agent-inject-secret-%s: \"%s\"" .name .path | nindent 8 }}
