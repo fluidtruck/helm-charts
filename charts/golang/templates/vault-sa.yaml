@@ -1,0 +1,6 @@
+{{- if .Values.vault.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "common.names.fullname" . }}-vault
+{{- end }}

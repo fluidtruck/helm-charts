@@ -159,6 +159,16 @@ resources:
   #   cpu: 100m
   #   memory: 128Mi
 
+## Vault settings for secrets
+vault:
+  enabled: true
+  annotations:
+    vault.hashicorp.com/agent-inject-secret-env: 'secret/data/go-demo/env'
+    vault.hashicorp.com/agent-inject-template-env: |
+      {{ with secret "secret/data/go-demo/env" -}}
+        export NEWRELIC_LICENSE="{{ .Data.data.NEWRELIC_LICENSE }}"
+      {{- end }}
+
 ## NextJS Deployment update strategy
 ## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
 ##

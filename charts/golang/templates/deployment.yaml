@@ -22,8 +22,14 @@ spec:
   template:
     metadata:
       {{- if .Values.podAnnotations }}
-      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
-      {{- end }}
+      annotations: 
+        {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-role: {{ template "common.names.fullname" . }}-vault
+        vault.hashicorp.com/agent-inject: "true"
+        {{- include "common.tplvalues.render" (dict "value" .Values.vaultAnnotations "context" $) | nindent 8 }}
+        {{- end }}
       labels: {{- include "common.labels.standard" . | nindent 8 }}
         {{- if .Values.podLabels }}
         {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
