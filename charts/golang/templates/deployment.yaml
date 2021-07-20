@@ -1,0 +1,184 @@
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
+  {{- if .Values.strategy }}
+  strategy: {{- include "common.tplvalues.render" ( dict "value" .Values.strategy "context" $ ) | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      {{- if .Values.podAnnotations }}
+      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+      {{- end }}
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+        {{- if .Values.podLabels }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- include "golang.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.affinity "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.tolerations "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- end }}
+      {{- if or (eq "true" (include "golang.waitForRedis" .)) (eq "true" (include "golang.waitForPostgresql" .)) }}
+      initContainers:
+        {{- if eq "true" (include "golang.waitForRedis" .) }}
+        - name: wait-for-redis
+          image: redis:alpine
+          env:
+            - name: REDIS_HOST
+              value: {{ include "golang.redisHost" . }}
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDISCLI_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: redis-password
+          args:
+            - /mnt/redis/wait-for-redis.sh
+          volumeMounts:
+            - name: wait-for-redis
+              mountPath: /mnt/redis
+        {{- end }}
+        {{- if eq "true" (include "golang.waitForPostgresql" .) }}
+        - name: wait-for-postgresql
+          image: postgres:alpine
+          env:
+            - name: POSTGRESQL_HOST
+              value: {{ include "golang.postgresqlHost" . }}
+            - name: POSTGRESQL_USERNAME
+              value: {{ .Values.postgresql.postgresqlUsername }}
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql
+                  key: postgresql-password
+          args:
+            - /mnt/postgresql/wait-for-postgresql.sh
+          volumeMounts:
+            - name: wait-for-postgresql
+              mountPath: /mnt/postgresql
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: app
+          image: {{ template "golang.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          env:
+            {{- if .Values.redis.enabled }}
+            - name: REDIS_HOST
+              value: {{ include "golang.redisHost" . }}
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: redis-password
+            {{- end }}
+            {{- if .Values.postgresql.enabled }}
+            - name: POSTGRESQL_HOST
+              value: {{ include "golang.postgresqlHost" . }}
+            - name: POSTGRESQL_PORT
+              value: "5432"
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql
+                  key: postgresql-password
+            {{- end }}
+            {{- range $key, $value := .Values.envVars }}
+            - name: {{ $key }}
+              {{- if or (typeIs "string" $value) (typeIs "float64" $value) (typeIs "bool" $value) }}
+              value: {{ include "common.tplvalues.render" (dict "value" $value "context" $) | quote }}
+              {{- else }}
+              {{- include "common.tplvalues.render" (dict "value" $value "context" $) | nindent 14 }}
+              {{- end }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.envVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.envVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.envVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.envVarsSecret "context" $) }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.applicationPort }}
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.lifecycle }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycle "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.resources }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+      {{- if or (eq "true" (include "golang.waitForRedis" .)) (eq "true" (include "golang.waitForPostgresql" .)) }}
+      volumes:
+        {{- if or (eq "true" (include "golang.waitForRedis" .)) }}
+        - name: wait-for-redis
+          configMap:
+            name: {{ template "common.names.fullname" . }}-wait-for-redis
+            defaultMode: 0777
+        {{- end }}
+        {{- if or (eq "true" (include "golang.waitForPostgresql" .)) }}
+        - name: wait-for-postgresql
+          configMap:
+            name: {{ template "common.names.fullname" . }}-wait-for-postgresql
+            defaultMode: 0777
+        {{- end }}
+      {{- end }}

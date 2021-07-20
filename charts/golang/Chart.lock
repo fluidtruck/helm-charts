@@ -1,0 +1,12 @@
+dependencies:
+- name: common
+  repository: https://fluidtruck.github.io/helm-charts
+  version: 1.0.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 10.6.0
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 14.7.2
+digest: sha256:c3c32b267c45fdebc0289ca8be5217df6acfcbf312a085332258ab45608a471b
+generated: "2021-07-19T14:58:13.095063-06:00"
