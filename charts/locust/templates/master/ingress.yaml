@@ -1,0 +1,17 @@
+apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  name: {{ template "common.names.fullname" . }}-master
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: master
+    loadtest: {{ .Values.loadtest.name | quote }}
+spec:
+  rules:
+    - host: {{ tpl .Values.master.ingress.hostname . | quote }}
+      http:
+        paths:
+          - path: /
+            {{- if eq "true" (include "common.ingress.supportsPathType" $) }}
+            pathType: ImplementationSpecific
+            {{- end }}
+            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" $) "servicePort" "http" "context" $) | nindent 14 }}

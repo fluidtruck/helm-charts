@@ -1,0 +1,17 @@
+{{- if .Values.worker.hpa.enabled }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "common.names.fullname" . }}-worker
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+    loadtest: {{ .Values.loadtest.name | quote }}
+spec:
+  scaleTargetRef:
+    apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+    kind: Deployment
+    name: {{ template "common.names.fullname" . }}-worker
+  minReplicas: {{ .Values.worker.hpa.minReplicas }}
+  maxReplicas: {{ .Values.worker.hpa.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.worker.hpa.targetCPUUtilizationPercentage }}
+{{- end }}

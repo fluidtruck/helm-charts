@@ -1,0 +1,57 @@
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "common.names.fullname" . }}-worker
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: worker
+    loadtest: {{ .Values.loadtest.name | quote }}
+spec:
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+      loadtest: {{ .Values.loadtest.name | quote }}
+  replicas: {{ .Values.worker.replicaCount }}
+  template:
+    metadata:
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+        app.kubernetes.io/component: worker
+        loadtest: {{ .Values.loadtest.name | quote }}
+    spec:
+      serviceAccountName: {{ template "common.names.fullname" . }}-worker
+      containers:
+      - name: locust
+        image: {{ template "locust.image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        env:
+          - name: LOCUST_HOST
+            value: {{ .Values.loadtest.hostname | quote }}
+          - name: LOCUST_MASTER_HOST
+            value: {{ template "common.names.fullname" . }}
+          - name: LOCUST_MASTER_PORT
+            value: "5557"
+        command:
+          - /usr/local/bin/locust
+        args:
+          - --worker
+          - --locustfile=/mnt/locust/main.py
+          - --host={{ .Values.loadtest.hostname }}
+          - --master-host={{ template "common.names.fullname" . }}
+          - --loglevel={{ .Values.worker.logLevel }}
+        {{- if .Values.worker.resources }}
+        resources:
+          {{- toYaml .Values.worker.resources | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+          - name: lib
+            mountPath: /mnt/locust/lib
+          - name: locustfile
+            mountPath: /mnt/locust
+      volumes:
+        - name: lib
+          configMap:
+            name: {{ template "locust.configmaps.lib" . }}
+        - name: locustfile
+          configMap:
+            name: {{ template "locust.configmaps.locustfile" . }}
