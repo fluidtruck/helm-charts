@@ -61,4 +61,27 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/golang-1.0.0/golang-1.0.0.tgz
     version: 1.0.0
-generated: "2021-07-20T16:43:58.897996609Z"
+  locust:
+  - apiVersion: v2
+    appVersion: 1.6.0
+    created: "2021-07-20T17:13:54.563623185Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    description: A Helm chart to launch Locust tests.
+    digest: 4f2efa41c161b364b08a9f3245b17d601dc903502831193a72168e9c709e77a8
+    icon: https://storage.googleapis.com/fluid-tidal-assets-stage/mclovin.jpg
+    keywords:
+    - fluidtruck
+    maintainers:
+    - email: aellis@fluidtruck.com
+      name: ellisio
+    name: locust
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/locust-1.0.0/locust-1.0.0.tgz
+    version: 1.0.0
+generated: "2021-07-20T17:13:54.563628885Z"
