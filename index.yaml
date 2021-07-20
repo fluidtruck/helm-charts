@@ -2,6 +2,31 @@ apiVersion: v1
 entries:
   common:
   - apiVersion: v2
+    appVersion: 1.1.0
+    created: "2021-07-20T17:55:25.088949278Z"
+    description: A Library Helm Chart for grouping common logic between Fluid Truck
+      charts. This chart is not deployable by itself.
+    digest: 83f5f9daa8767d042eff7c96b0c5d0dd8cf1c467a2cc6a604ec7b5a701f6ff12
+    home: https://github.com/fluidtruck/helm-charts/tree/main/charts/common
+    icon: https://storage.googleapis.com/fluid-tidal-assets-stage/mclovin.jpg
+    keywords:
+    - common
+    - helper
+    - template
+    - function
+    - fluidtruck
+    maintainers:
+    - email: aellis@fluidtruck.com
+      name: ellisio
+    name: common
+    sources:
+    - https://github.com/fluidtruck/helm-charts
+    - http://www.fluidtruck.com/
+    type: library
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/common-1.1.0/common-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2021-07-19T19:21:47.981853592Z"
     description: A Library Helm Chart for grouping common logic between Fluid Truck
@@ -84,4 +109,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/locust-1.0.0/locust-1.0.0.tgz
     version: 1.0.0
-generated: "2021-07-20T17:13:54.563628885Z"
+generated: "2021-07-20T17:55:25.088956478Z"
