@@ -1,0 +1,30 @@
+apiVersion: v2
+name: cronjob
+description: A chart for CronJobs.
+icon: https://contino.github.io/intro-k8/images/kubernetes/cronjob.png
+version: 1.0.0
+appVersion: 1.0.0
+type: application
+keywords:
+  - cronjob
+maintainers:
+  - name: ellisio
+    email: aellis@fluidtruck.com
+dependencies:
+  - name: common
+    repository: https://fluidtruck.github.io/helm-charts
+    tags:
+      - fluidtruck-common
+    version: 1.x.x
+  - name: postgresql
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - postgresql
+    version: "10.6.0"
+    condition: postgresql.enabled
+  - name: redis
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - redis
+    version: "14.7.2"
+    condition: redis.enabled

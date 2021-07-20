@@ -1,0 +1,142 @@
+# Default values for cronjob.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## NextJS image version
+## ref: https://hub.docker.com/r/ellisio/goecho/tags/
+##
+image:
+  registry: docker.io
+  repository: alpine
+  tag: latest
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+
+## Force target Kubernetes version (using Helm capabilites if not set)
+##
+kubeVersion:
+
+## String to partially override node.fullname template (will maintain the release name)
+##
+# nameOverride:
+
+## String to fully override node.fullname template
+##
+# fullnameOverride:
+
+## Affinity for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}
+
+## Node labels for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+
+## Tolerations for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: {}
+
+## Add labels to all the deployed resources
+##
+commonLabels: {}
+
+## Add annotations to all the deployed resources
+##
+commonAnnotations: {}
+
+## Additional pod annotations
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
+
+## Additional pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+
+## Pods' priority.
+## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+##
+priorityClassName: ""
+
+## An array to add extra env vars
+## For example:
+##
+envVars: {}
+  # BEARER_AUTH: true
+  # OTHER_VAR: "foo"
+  # SOME_PASSWORD:
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: some-ref
+  #       key: redis-password
+
+## ConfigMap with extra environment variables
+##
+envVarsCM:
+
+## Secret with extra environment variables
+##
+envVarsSecret:
+
+## SecurityContext configuration
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+##
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001
+  runAsNonRoot: true
+
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+
+## CronJob Parameters
+##
+cronjobs:
+  - name: hello
+    schedule: "*/1 * * * *"
+    # image:
+      # registry: docker.io
+      # repository: alpine
+      # tag: latest
+      # # pullSecrets:
+      # #   - myRegistryKeySecretName
+    command:
+      - sh
+      - -c
+      - "date; echo Hello"
+    successfulJobsHistoryLimit: 0
+    failedJobsHistoryLimit: 0
+
+## Configure the postgresql service
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
+##
+postgresql:
+  enabled: false
+  postgresqlUsername: postgresql
+  postgresqlPassword: ""
+  postgresqlDatabase: ""
+  wait: false
+
+## Configure the redis service
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+##
+redis:
+  enabled: false
+  password: ""
+  wait: false
+  cluster:
+    enabled: false
