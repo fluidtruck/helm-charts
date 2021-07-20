@@ -1,0 +1,343 @@
+# Default values for golang.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Golang image version
+##
+image:
+  registry: ghcr.io
+  repository: fluidtruck/go-demo
+  tag: latest
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+
+## Force target Kubernetes version (using Helm capabilites if not set)
+##
+kubeVersion:
+
+## String to partially override node.fullname template (will maintain the release name)
+##
+# nameOverride:
+
+## String to fully override node.fullname template
+##
+# fullnameOverride:
+
+## Specify the number of replicas for the application
+##
+replicaCount: 1
+
+## Specify the port where your application will be running
+##
+applicationPort: 8080
+
+## Affinity for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}
+
+## Node labels for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+
+## Tolerations for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: {}
+
+## Add labels to all the deployed resources
+##
+commonLabels: {}
+
+## Add annotations to all the deployed resources
+##
+commonAnnotations: {}
+
+## Additional pod annotations
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
+
+## Additional pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+
+## Configure extra options for liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+##
+livenessProbe:
+  enabled: true
+  path: '/'
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+
+readinessProbe:
+  enabled: true
+  path: '/'
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+  successThreshold: 1
+
+## NextJS pods' priority.
+## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+##
+priorityClassName: ""
+
+## An array to add extra env vars
+## For example:
+##
+envVars: {}
+  # BEARER_AUTH: true
+  # OTHER_VAR: "foo"
+  # SOME_PASSWORD:
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: some-ref
+  #       key: redis-password
+
+## ConfigMap with extra environment variables
+##
+envVarsCM:
+
+## Secret with extra environment variables
+##
+envVarsSecret:
+
+## SecurityContext configuration
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+##
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001
+  runAsNonRoot: true
+
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+
+## NextJS containers' lifecycle
+## ref: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
+##
+lifecycle: {}
+  # preStop:
+  #   exec:
+  #     command: ["sleep", 30]
+
+## NextJS containers' termination grace period.
+## ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#podspec-v1-core
+##
+terminationGracePeriodSeconds: 30
+
+## NextJS containers' resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits: {}
+  #   cpu: 100m
+  #   memory: 128Mi
+  requests: {}
+  #   cpu: 100m
+  #   memory: 128Mi
+
+## NextJS Deployment update strategy
+## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
+##
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 50%
+    maxUnavailable: 0
+
+## Service parameters
+##
+service:
+  ## Service type
+  ##
+  type: ClusterIP
+
+  ## HTTP Port
+  ##
+  port: 80
+
+  ## clusterIP: ""
+  ## loadBalancerIP for the Node Service (optional, cloud specific)
+  ## ref: http://kubernetes.io/docs/user-guide/services/#type-loadbalancer
+  ##
+
+  ## Control where client requests go, to the same pod or round-robin
+  ## Values: ClientIP or None
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  sessionAffinity: 'None'
+
+  ## Specify the nodePort value for the LoadBalancer and NodePort service types.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  ##
+  # nodePort:
+
+  ## Set the LoadBalancer service type to internal only.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  # loadBalancerIP:
+
+  ## In order to limit which client IP's can access the Network Load Balancer, specify loadBalancerSourceRanges.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support
+  ##
+  # loadBalancerSourceRanges:
+
+  ## Provide any additional annotations which may be required. This can be used to
+  ## set the LoadBalancer service type to internal only.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  annotations: {}
+
+## Configure the ingress resource that allows you to access the service.
+## ref: http://kubernetes.io/docs/user-guide/ingress/
+##
+ingress:
+  ## Set to true to enable ingress record generation
+  ##
+  enabled: false
+
+  ## Set this to true in order to add the corresponding annotations for cert-manager
+  ##
+  # clusterIssuer: "letsencrypt-staging"
+
+  ## Ingress Path type
+  ##
+  pathType: ImplementationSpecific
+
+  ## Override API Version (automatically detected if not set)
+  ##
+  # apiVersion:
+
+  ## When the ingress is enabled, a host pointing to this will be created
+  ##
+  hostname: golang.local
+
+  ## The Path to Node.js. You may need to set this to '/*' in order to use this
+  ## with ALB ingress controllers.
+  ##
+  path: /
+
+  ## Ingress annotations done as key:value pairs
+  ## For a full list of possible ingress annotations, please see
+  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
+  ##
+  ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
+  ##
+  annotations: {}
+
+  ## Enable TLS configuration for the hostname defined at ingress.hostname parameter
+  ## TLS certificates will be retrieved from a TLS secret with name: {{- printf "%s-tls" .Values.ingress.hostname }}
+  ## You can use the ingress.secrets parameter to create this TLS secret or relay on cert-manager to create it
+  ##
+  tls: false
+
+  ## The list of additional hostnames to be covered with this ingress record.
+  ## Most likely the hostname above will be enough, but in the event more hosts are needed, this is an array
+  ## extraHosts:
+  ## - name: node.local
+  ##   path: /
+  ##
+
+  ## Any additional arbitrary paths that may need to be added to the ingress under the main host.
+  ## For example: The ALB ingress controller requires a special rule for handling SSL redirection.
+  ## extraPaths:
+  ## - path: /*
+  ##   backend:
+  ##     serviceName: ssl-redirect
+  ##     servicePort: use-annotation
+  ##
+
+  ## The tls configuration for additional hostnames to be covered with this ingress record.
+  ## see: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
+  ## extraTls:
+  ## - hosts:
+  ##     - node.local
+  ##   secretName: node.local-tls
+  ##
+
+  ## If you're providing your own certificates, please use this to add the certificates as secrets
+  ## key and certificate should start with -----BEGIN CERTIFICATE----- or
+  ## -----BEGIN RSA PRIVATE KEY-----
+  ##
+  ## name should line up with a tlsSecret set further up
+  ## If you're using cert-manager, this is unneeded, as it will create the secret for you if it is not set
+  ##
+  ## It is also possible to create and manage the certificates outside of this helm chart
+  ## Please see README.md for more information
+  ##
+  secrets: []
+  ## - name: node.local-tls
+  ##   key:
+  ##   certificate:
+  ##
+
+  ## Set to true to install the GCE frontend config.
+  ##
+  installGCEFrontendConfig: false
+
+## Configure the hpa resource that enables autoscaling of the deployment
+## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+##
+hpa:
+  ## Set to true to enable hpa record generation
+  ##
+  enabled: false
+
+  ## The minimum number of replicas to maintain
+  ##
+  minReplicas: 1
+
+  ## The maximum number of replicas to maintain
+  ##
+  maxReplicas: 50
+
+  ## The target CPU utilization percentage
+  ##
+  targetCPUUtilizationPercentage: 40
+
+  ## HPA annotations done as key:value pairs
+  ##
+  annotations: {}
+
+## Configure the postgresql service
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
+##
+postgresql:
+  enabled: false
+  postgresqlUsername: postgresql
+  postgresqlPassword: ""
+  postgresqlDatabase: ""
+  wait: false
+
+## Configure the redis service
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+##
+redis:
+  enabled: false
+  password: ""
+  wait: false
+  cluster:
+    enabled: false

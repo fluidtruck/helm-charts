@@ -1,0 +1,9 @@
+{{- if and .Values.ingress.enabled .Values.ingress.tls .Values.ingress.installGCEFrontendConfig }}
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: force-https
+spec:
+  redirectToHttps:
+    enabled: true
+{{- end }}

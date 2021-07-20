@@ -1,0 +1,31 @@
+{{- if eq "true" (include "golang.waitForRedis" .) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "common.names.fullname" . }}-wait-for-redis
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+data:
+  wait-for-redis.sh: |
+    #/bin/sh
+
+    set -x;
+    echo "Waiting for Redis on ${REDIS_HOST}:${REDIS_PORT}"
+
+    ATTEMPTS=0
+
+    until [[ $(redis-cli -h "${REDIS_HOST}" -p "${REDIS_PORT}" ping) == "PONG" ]]; do
+      if [ $ATTEMPTS -gt 500 ]; then
+        echo "Failed to connect to Redis."
+        exit 1
+      fi
+
+      ATTEMPTS=$(($ATTEMPTS+1))
+      echo "Still waiting..."
+      sleep 1
+    done
+
+    echo "Connected to Redis!"
+{{- end }}
