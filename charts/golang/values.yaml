@@ -159,6 +159,20 @@ resources:
   #   cpu: 100m
   #   memory: 128Mi
 
+## Vault settings for secrets
+##
+vault:
+  enabled: false
+  secrets: []
+    # - name: env
+    #   path: "secret/data/env"
+    #   value: |-
+    #     export NEWRELIC_LICENSE="{{ .Data.data.NEWRELIC_LICENSE }}"
+    # - name: db-creds
+    #   path: "secret/data/db"
+    #   value: |-
+    #     export POSTGRES_URL="postgresql://{{ .Data.data.PGUSER }}:{{ .Data.data.PGPASSWORD }}@postgres/{{ .Data.data.PGDATABASE }}"
+
 ## NextJS Deployment update strategy
 ## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
 ##
