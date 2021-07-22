@@ -9,7 +9,7 @@ metadata:
     {{- end }}
   {{- if or .Values.ingress.clusterIssuer .Values.ingress.installGCEFrontendConfig .Values.ingress.annotations .Values.commonAnnotations }}
   annotations:
-    {{- if .Values.ingress.tls }}
+    {{- if or .Values.ingress.tls .Values.ingress.extraTls }}
     {{- if .Values.ingress.clusterIssuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer | quote }}
     {{- end }}
