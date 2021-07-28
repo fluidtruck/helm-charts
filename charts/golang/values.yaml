@@ -165,9 +165,11 @@ vault:
   enabled: false
   secrets: []
     # - name: env
-    #   path: "secret/data/env"
+    #   path: "devops/go-demo/prod/secret/data/env"
     #   value: |-
-    #     export NEWRELIC_LICENSE="{{ .Data.data.NEWRELIC_LICENSE }}"
+    #     {{- range $k, $v := .Data.data -}}
+    #        {{ $k }}={{ $v }}
+    #     {{- end -}}
     # - name: db-creds
     #   path: "secret/data/db"
     #   value: |-
