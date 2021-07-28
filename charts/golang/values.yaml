@@ -169,7 +169,7 @@ vault:
     #   value: |-
     #     {{- range $k, $v := .Data.data -}}
     #        {{ $k }}={{ $v }}
-    #     {{- end -}}
+    #     {{ end -}}
     # - name: db-creds
     #   path: "secret/data/db"
     #   value: |-
