@@ -164,16 +164,23 @@ resources:
 vault:
   enabled: false
   secrets: []
+    # The below example will use a standardized template
+    # that injects a file formatted in a way that allows
+    # libraries like Viper, or dotenv, to load the file at
+    # runtime.
+    #
+    # - name: env
+    #   path: "devops/go-demo/data/prod/env"
+
+    # The below example shows you how to build your own
+    # template value for the injected Vault file.
+    #
     # - name: env
     #   path: "devops/go-demo/prod/secret/data/env"
     #   value: |-
     #     {{- range $k, $v := .Data.data -}}
-    #        {{ $k }}={{ $v }}
+    #        export {{ $k }}="{{ $v }}"
     #     {{ end -}}
-    # - name: db-creds
-    #   path: "secret/data/db"
-    #   value: |-
-    #     export POSTGRES_URL="postgresql://{{ .Data.data.PGUSER }}:{{ .Data.data.PGPASSWORD }}@postgres/{{ .Data.data.PGDATABASE }}"
 
 ## NextJS Deployment update strategy
 ## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
