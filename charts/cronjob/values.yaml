@@ -129,6 +129,8 @@ postgresql:
   postgresqlUsername: postgresql
   postgresqlPassword: ""
   postgresqlDatabase: ""
+  image:
+    tag: 13.4.0-debian-10-r4
   wait: false
 
 ## Configure the redis service
