@@ -2,8 +2,8 @@ apiVersion: v2
 name: golang
 description: A chart for Golang.
 icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
-version: 1.1.1
-appVersion: 1.1.1
+version: 1.2.0
+appVersion: 1.2.0
 type: application
 keywords:
   - go
@@ -20,11 +20,11 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     tags:
       - postgresql
-    version: "10.6.0"
+    version: "10.9.1"
     condition: postgresql.enabled
   - name: redis
     repository: https://charts.bitnami.com/bitnami
     tags:
       - redis
-    version: "14.7.2"
+    version: "14.8.8"
     condition: redis.enabled

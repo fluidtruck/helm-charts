@@ -1,4 +1,4 @@
-name: Validate Pull Request
+name: validate
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
       - synchronize
 
 jobs:
-  validate:
+  title:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
