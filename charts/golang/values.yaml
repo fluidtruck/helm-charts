@@ -38,7 +38,7 @@ replicaCount: 1
 
 ## Specify the port where your application will be running
 ##
-applicationPort: 8080
+applicationPort: 8090
 
 ## Affinity for pod assignment. Evaluated as a template.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
