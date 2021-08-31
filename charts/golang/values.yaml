@@ -163,6 +163,7 @@ resources:
 ##
 vault:
   enabled: false
+  role: '{{ .Release.Namespace }}'
   secrets: []
     # The below example will use a standardized template
     # that injects a file formatted in a way that allows
