@@ -62,7 +62,7 @@ spec:
       {{- if .Values.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- end }}
-      serviceAccountName: {{ tpl .Values.vault.role . | quote }}
+      serviceAccountName: {{ include "common.names.fullname" . }}
       {{- if or (eq "true" (include "golang.waitForRedis" .)) (eq "true" (include "golang.waitForPostgresql" .)) }}
       initContainers:
         {{- if eq "true" (include "golang.waitForRedis" .) }}
