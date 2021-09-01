@@ -177,7 +177,7 @@ vault:
     # template value for the injected Vault file.
     #
     # - name: env
-    #   path: "devops/go-demo/prod/secret/data/env"
+    #   path: "devops/go-demo/data/prod/env"
     #   value: |-
     #     {{- range $k, $v := .Data.data -}}
     #        export {{ $k }}="{{ $v }}"
