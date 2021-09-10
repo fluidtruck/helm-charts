@@ -33,7 +33,7 @@ spec:
         {{- printf "vault.hashicorp.com/agent-inject-secret-%s: \"%s\"" .name .path | nindent 8 }}
         {{- printf "vault.hashicorp.com/agent-inject-template-%s: |" .name | nindent 8 }}
           {{ printf "{{- with secret \"%s\" -}}" .path }}
-          {{ .value | default (printf "{{- range $k, $v := .Data.data -}}\n   export {{ $k }}={{ $v }}\n{{ end -}}") | indent 10 | trim  }}
+          {{ .value | default (printf "{{- range $k, $v := .Data.data -}}\n   export {{ $k }}=\"{{ $v }}\"\n{{ end -}}") | indent 10 | trim  }}
           {{ printf "{{- end -}}" }}
         {{- end }}
         {{- end }}
