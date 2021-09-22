@@ -21,8 +21,8 @@ spec:
   {{- end }}
   template:
     metadata:
-      {{- if or .Values.podAnnotations .Values.vault.enabled }}
       annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
         {{- if .Values.podAnnotations }}
         {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
         {{- end }}
@@ -37,7 +37,6 @@ spec:
           {{ printf "{{- end -}}" }}
         {{- end }}
         {{- end }}
-      {{- end }}
       labels: {{- include "common.labels.standard" . | nindent 8 }}
         {{- if .Values.podLabels }}
         {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
