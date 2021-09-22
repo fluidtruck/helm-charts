@@ -156,6 +156,10 @@ spec:
               containerPort: {{ .Values.applicationPort }}
             - name: health
               containerPort: 8080
+            {{- range $key, $value := .Values.extraApplicationPorts }}
+            - name: {{ $key }}
+              containerPort: {{ $value }}
+            {{- end }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:

@@ -1,5 +1,5 @@
 {{/*
-Return the proper NextJS image name
+Return the proper image name
 */}}
 {{- define "golang.image" -}}
 {{- include "common.images.image" (dict "imageRoot" .Values.image) -}}

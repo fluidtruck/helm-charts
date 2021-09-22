@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-## Golang image version
+## The image version
 ##
 image:
   registry: ghcr.io
@@ -39,6 +39,11 @@ replicaCount: 1
 ## Specify the port where your application will be running
 ##
 applicationPort: 8090
+
+## Enables extra ports for the container
+##
+extraApplicationPorts: []
+#   delve: 2345
 
 ## Affinity for pod assignment. Evaluated as a template.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -94,7 +99,7 @@ readinessProbe:
   failureThreshold: 3
   successThreshold: 1
 
-## NextJS pods' priority.
+## The pods' priority.
 ## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 ##
 priorityClassName: ""
@@ -131,7 +136,7 @@ podSecurityContext:
   enabled: true
   fsGroup: 1001
 
-## NextJS containers' lifecycle
+## The containers' lifecycle
 ## ref: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
 ##
 lifecycle: {}
@@ -139,12 +144,12 @@ lifecycle: {}
   #   exec:
   #     command: ["sleep", 30]
 
-## NextJS containers' termination grace period.
+## The containers' termination grace period.
 ## ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#podspec-v1-core
 ##
 terminationGracePeriodSeconds: 30
 
-## NextJS containers' resource requests and limits
+## The containers' resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 resources:
@@ -183,7 +188,7 @@ vault:
     #        export {{ $k }}="{{ $v }}"
     #     {{ end -}}
 
-## NextJS Deployment update strategy
+## The Deployment update strategy
 ## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
 ##
 strategy:

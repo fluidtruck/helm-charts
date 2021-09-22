@@ -1,0 +1,2 @@
+extraApplicationPorts:
+  dlv: 2345
