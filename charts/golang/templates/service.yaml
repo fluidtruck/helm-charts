@@ -36,4 +36,7 @@ spec:
       {{- else if eq .Values.service.type "ClusterIP" }}
       nodePort: null
       {{- end }}
+    - name: http-legacy
+      port: 8090
+      targetPort: http
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
