@@ -11,16 +11,23 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Wait for Previous Runs
+        uses: ahmadnassri/action-workflow-queue@v1
 
-      - run: |
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Copy README
+        run: |
           cp -f README.md ${{ runner.temp }}/README.md
 
-      - uses: actions/checkout@v2
+      - name: Checkout gh-pages
+        uses: actions/checkout@v2
         with:
           ref: gh-pages
 
-      - run: |
+      - name: Sync README to gh-pages
+        run: |
           cp -f ${{ runner.temp }}/README.md .
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"

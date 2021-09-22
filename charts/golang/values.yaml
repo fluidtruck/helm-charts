@@ -356,19 +356,19 @@ hpa:
 ##
 postgresql:
   enabled: false
-  postgresqlUsername: postgresql
-  postgresqlPassword: ""
-  postgresqlDatabase: ""
-  image:
-    tag: 13.4.0-debian-10-r4
   wait: false
+  postgresqlUsername: postgresql
+  postgresqlPassword: postgresql
+  postgresqlDatabase: postgresql
+  image:
+    tag: '13.4.0'
 
 ## Configure the redis service
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
 ##
 redis:
   enabled: false
-  password: ""
   wait: false
-  cluster:
-    enabled: false
+  architecture: standalone
+  auth:
+    password: redis

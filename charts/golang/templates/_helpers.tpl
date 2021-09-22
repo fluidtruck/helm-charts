@@ -53,7 +53,7 @@ Usage:
 {{ include "golang.waitForRedis" . }}
 */}}
 {{- define "golang.waitForRedis" -}}
-{{- if and (eq .Values.redis.enabled true) (eq .Values.redis.wait true) (.Values.redis.password) -}}
+{{- if and (eq .Values.redis.enabled true) (eq .Values.redis.wait true) -}}
 {{- print "true" -}}
 {{- else -}}
 {{- print "false" -}}

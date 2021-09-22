@@ -7,9 +7,6 @@ chart-dirs:
 chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
   - fluidtruck=https://fluidtruck.github.io/helm-charts
-  - prometheus-community=https://prometheus-community.github.io/helm-charts
-  - grafana=https://grafana.github.io/helm-charts
-  - stable=https://charts.helm.sh/stable
 helm-extra-args: --timeout 600s
 validate-chart-schema: true
 validate-maintainers: true

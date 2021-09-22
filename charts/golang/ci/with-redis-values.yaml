@@ -1,4 +1,3 @@
 redis:
   enabled: true
-  password: password
   wait: true

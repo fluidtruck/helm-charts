@@ -21,7 +21,7 @@ collaborators:
 
 teams:
   - name: devops
-    permission: push
+    permission: admin
 
 branches:
   - name: main
