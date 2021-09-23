@@ -69,7 +69,7 @@ spec:
           image: redis:alpine
           env:
             - name: REDIS_HOST
-              value: {{ include "golang.redisHost" . }}
+              value: {{ include "golang.redisHost" . | quote }}
             - name: REDIS_PORT
               value: "6379"
             - name: REDISCLI_AUTH
@@ -88,7 +88,7 @@ spec:
           image: postgres:alpine
           env:
             - name: POSTGRESQL_HOST
-              value: {{ include "golang.postgresqlHost" . }}
+              value: {{ include "golang.postgresqlHost" . | quote }}
             - name: POSTGRESQL_USERNAME
               value: {{ .Values.postgresql.postgresqlUsername }}
             - name: POSTGRESQL_PASSWORD
@@ -113,7 +113,7 @@ spec:
           env:
             {{- if .Values.redis.enabled }}
             - name: REDIS_HOST
-              value: {{ include "golang.redisHost" . }}
+              value: {{ include "golang.redisHost" . | quote }}
             - name: REDIS_PORT
               value: "6379"
             - name: REDIS_PASSWORD
@@ -124,7 +124,7 @@ spec:
             {{- end }}
             {{- if .Values.postgresql.enabled }}
             - name: POSTGRESQL_HOST
-              value: {{ include "golang.postgresqlHost" . }}
+              value: {{ include "golang.postgresqlHost" . | quote }}
             - name: POSTGRESQL_PORT
               value: "5432"
             - name: POSTGRESQL_PASSWORD
