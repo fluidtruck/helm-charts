@@ -252,6 +252,10 @@ ingress:
   ##
   # clusterIssuer: "letsencrypt-staging"
 
+  ## Set this to the required ingressClass. Set to false to use your cluster's default ingress.
+  ##
+  ingressClass: nginx
+
   ## Ingress Path type
   ##
   pathType: ImplementationSpecific
