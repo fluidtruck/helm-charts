@@ -16,6 +16,9 @@ metadata:
     {{- if .Values.ingress.installGCEFrontendConfig }}
     networking.gke.io/v1beta1.FrontendConfig: force-https
     {{- end }}
+    {{- if .Values.ingress.ingressClass }}
+    kubernetes.io/ingress.class: {{ .Values.ingress.ingressClass }}
+    {{- end }}
     {{- end }}
     {{- if .Values.ingress.annotations }}
     {{- include "common.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
