@@ -22,7 +22,7 @@ Compile all warnings into a single message, and call fail.
 
 {{- if $message -}}
 {{-   printf "\nVALUES VALIDATION:\n%s" $message | fail -}}
-{{- end -}}\
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -44,7 +44,7 @@ Usage:
 {{ include "golang.postgresqlHost" . }}
 */}}
 {{- define "golang.postgresqlHost" -}}
-{{- printf "%s-postgresql.%s.svc.cluster.local" .Release.Name .Release.Namespace | quote -}}
+{{- printf "%s-postgresql.%s.svc.cluster.local" .Release.Name .Release.Namespace -}}
 {{- end -}}
 
 {{/*
@@ -66,5 +66,23 @@ Usage:
 {{ include "golang.redisHost" . }}
 */}}
 {{- define "golang.redisHost" -}}
-{{- printf "%s-redis-master.%s.svc.cluster.local" .Release.Name .Release.Namespace | quote -}}
+{{- printf "%s-redis-master.%s.svc.cluster.local" .Release.Name .Release.Namespace -}}
+{{- end -}}
+
+{{/*
+Print root hostname to be used other place.
+Usage:
+{{ include "golang.ingressRootHostname" . }}
+*/}}
+{{- define "golang.ingressRootHostname" -}}
+{{- printf "%s.%s" .Release.Namespace .Values.ingress.domain -}}
+{{- end -}}
+
+{{/*
+Print hostname for the ingress.
+Usage:
+{{ include "golang.ingressHostname" . }}
+*/}}
+{{- define "golang.ingressHostname" -}}
+{{- printf "%s.%s" .Release.Name (include "golang.ingressRootHostname" .) -}}
 {{- end -}}

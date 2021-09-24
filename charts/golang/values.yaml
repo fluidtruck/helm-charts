@@ -248,88 +248,47 @@ ingress:
   ##
   enabled: false
 
-  ## Set this to true in order to add the corresponding annotations for cert-manager
+  ## Set this to the required desired IngressClass. Set to false to use your cluster's default ingress.
   ##
-  # clusterIssuer: "letsencrypt-staging"
+  class: nginx
 
-  ## Set this to the required ingressClass. Set to false to use your cluster's default ingress.
+  ## Set this to a specific hostname, and the automatic hostname creations will be skipped.
   ##
-  ingressClass: nginx
+  # hostname: my-app.fluiddev.io
 
-  ## Ingress Path type
+  ## Set this to the domain you want to use.
   ##
-  pathType: ImplementationSpecific
-
-  ## Override API Version (automatically detected if not set)
-  ##
-  # apiVersion:
-
-  ## When the ingress is enabled, a host pointing to this will be created
-  ##
-  hostname: golang.local
+  domain: fluiddev.io
 
   ## The Path to Node.js. You may need to set this to '/*' in order to use this
   ## with ALB ingress controllers.
   ##
   path: /
 
+  ## Ingress Path type
+  ##
+  pathType: ImplementationSpecific
+
+  ## Configure TLS
+  ##
+  tls:
+    ## Set this to true to enable TLS
+    ##
+    enabled: false
+
+    ## Set this to true in order to add the corresponding annotations for cert-manager
+    ##
+    issuer: "letsencrypt-staging"
+
+  ## Override API Version (automatically detected if not set)
+  ##
+  # apiVersion:
+
   ## Ingress annotations done as key:value pairs
   ## For a full list of possible ingress annotations, please see
   ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
   ##
-  ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
-  ##
   annotations: {}
-
-  ## Enable TLS configuration for the hostname defined at ingress.hostname parameter
-  ## TLS certificates will be retrieved from a TLS secret with name: {{- printf "%s-tls" .Values.ingress.hostname }}
-  ## You can use the ingress.secrets parameter to create this TLS secret or relay on cert-manager to create it
-  ##
-  tls: false
-
-  ## The list of additional hostnames to be covered with this ingress record.
-  ## Most likely the hostname above will be enough, but in the event more hosts are needed, this is an array
-  ## extraHosts:
-  ## - name: node.local
-  ##   path: /
-  ##
-
-  ## Any additional arbitrary paths that may need to be added to the ingress under the main host.
-  ## For example: The ALB ingress controller requires a special rule for handling SSL redirection.
-  ## extraPaths:
-  ## - path: /*
-  ##   backend:
-  ##     serviceName: ssl-redirect
-  ##     servicePort: use-annotation
-  ##
-
-  ## The tls configuration for additional hostnames to be covered with this ingress record.
-  ## see: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
-  ## extraTls:
-  ## - hosts:
-  ##     - node.local
-  ##   secretName: node.local-tls
-  ##
-
-  ## If you're providing your own certificates, please use this to add the certificates as secrets
-  ## key and certificate should start with -----BEGIN CERTIFICATE----- or
-  ## -----BEGIN RSA PRIVATE KEY-----
-  ##
-  ## name should line up with a tlsSecret set further up
-  ## If you're using cert-manager, this is unneeded, as it will create the secret for you if it is not set
-  ##
-  ## It is also possible to create and manage the certificates outside of this helm chart
-  ## Please see README.md for more information
-  ##
-  secrets: []
-  ## - name: node.local-tls
-  ##   key:
-  ##   certificate:
-  ##
-
-  ## Set to true to install the GCE frontend config.
-  ##
-  installGCEFrontendConfig: false
 
 ## Configure the hpa resource that enables autoscaling of the deployment
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/

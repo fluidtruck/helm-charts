@@ -1,28 +1,20 @@
-1. Get the URL of your Golang app by running:
-
 {{- if .Values.ingress.enabled }}
-
-  echo "Node app URL: http://{{ .Values.ingress.hostname }}"
-
-{{- else if eq .Values.service.type "NodePort" }}
-
-  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "common.names.fullname" . }})
-  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
-  echo "Node app URL: http://$NODE_IP:$NODE_PORT/"
-
-{{- else if eq .Values.service.type "LoadBalancer" }}
-
-  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-        Watch the status with: 'kubectl get svc -w {{ template "common.names.fullname" . }} --namespace {{ .Release.Namespace }}'
-
-  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "common.names.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
-  echo "Node app URL: http://$SERVICE_IP/"
-
-{{- else if eq .Values.service.type "ClusterIP" }}
-
-  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} {{ .Values.service.port  }}:{{ .Values.service.port }}
-  echo "Node app URL: http://127.0.0.1:{{ .Values.service.port }}/"
+{{- $protocol := ternary "https" "http" .Values.ingress.tls.enabled }}
+To access your application using your browser, open the following URL(s):
+{{ if .Values.ingress.hostname }}
+  {{ $protocol }}://{{ tpl .Values.ingress.hostname . }}
+{{- else }}
+  {{ $protocol }}://{{ include "golang.ingressHostname" . }}
+{{- end }}
 
 {{- end }}
+
+To access your application using kubectl port forwarding, use the following command:
+
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} 8080:{{ .Values.service.port }}
+
+Then access your application using your browser, open the following URL:
+
+  http://127.0.0.1:8080
 
 {{- include "golang.validateValues" . }}
