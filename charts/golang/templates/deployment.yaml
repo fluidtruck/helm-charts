@@ -1,3 +1,4 @@
+{{- $dbHost := include "golang.postgresqlHost" . -}}
 apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
@@ -87,15 +88,12 @@ spec:
         - name: wait-for-postgresql
           image: postgres:alpine
           env:
-            - name: POSTGRESQL_HOST
-              value: {{ include "golang.postgresqlHost" . | quote }}
-            - name: POSTGRESQL_USERNAME
+            - name: DB_HOST
+              value: {{ $dbHost }}
+            - name: DB_DATABASE
+              value: {{ .Values.postgresql.postgresqlDatabase }}
+            - name: DB_USER
               value: {{ .Values.postgresql.postgresqlUsername }}
-            - name: POSTGRESQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-postgresql
-                  key: postgresql-password
           args:
             - /mnt/postgresql/wait-for-postgresql.sh
           volumeMounts:
@@ -123,15 +121,19 @@ spec:
                   key: redis-password
             {{- end }}
             {{- if .Values.postgresql.enabled }}
-            - name: POSTGRESQL_HOST
-              value: {{ include "golang.postgresqlHost" . | quote }}
-            - name: POSTGRESQL_PORT
-              value: "5432"
-            - name: POSTGRESQL_PASSWORD
+            - name: DB_HOST
+              value: {{ $dbHost }}
+            - name: DB_USER
+              value: {{ .Values.postgresql.postgresqlUsername }}
+            - name: DB_DATABASE
+              value: {{ .Values.postgresql.postgresqlDatabase }}
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-postgresql
                   key: postgresql-password
+            - name: DB_URL
+              value: postgress://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):5432/$(DB_DATABASE)
             {{- end }}
             {{- range $key, $value := .Values.envVars }}
             - name: {{ $key }}
