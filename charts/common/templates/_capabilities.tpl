@@ -57,4 +57,11 @@ Return the appropriate apiVersion for CronJob.
 {{- else -}}
 {{- print "batch/v1" -}}
 {{- end }}
+
+{{/*
+Return the appropriate apiVersion for Job.
+*/}}
+{{- define "common.capabilities.job.apiVersion" -}}
+{{ include "common.capabilities.cronjob.apiVersion" -}}
+{{- end }}
 {{- end -}}
