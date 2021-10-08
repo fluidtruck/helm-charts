@@ -133,7 +133,7 @@ spec:
                   name: {{ .Release.Name }}-postgresql
                   key: postgresql-password
             - name: DB_URL
-              value: postgress://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):5432/$(DB_DATABASE)
+              value: postgress://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):5432/$(DB_DATABASE)?sslmode=disable
             {{- end }}
             {{- range $key, $value := .Values.envVars }}
             - name: {{ $key }}
