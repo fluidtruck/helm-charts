@@ -58,3 +58,14 @@ Return the appropriate apiVersion for CronJob.
 {{- print "batch/v1" -}}
 {{- end }}
 {{- end -}}
+
+{{/*
+Return the appropriate apiVersion for Job.
+*/}}
+{{- define "common.capabilities.job.apiVersion" -}}
+{{- if semverCompare "<1.21-0" (include "common.capabilities.kubeVersion" .) -}}
+{{- print "batch/v1beta1" -}}
+{{- else -}}
+{{- print "batch/v1" -}}
+{{- end }}
+{{- end -}}
