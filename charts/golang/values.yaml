@@ -83,6 +83,7 @@ podLabels: {}
 ##
 livenessProbe:
   enabled: true
+  port: 8080
   path: '/'
   initialDelaySeconds: 60
   periodSeconds: 10
@@ -92,6 +93,7 @@ livenessProbe:
 
 readinessProbe:
   enabled: true
+  port: 8080
   path: '/'
   initialDelaySeconds: 10
   periodSeconds: 5
