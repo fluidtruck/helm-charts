@@ -102,6 +102,26 @@ spec:
         {{- end }}
       {{- end }}
       containers:
+        {{- if .Values.swagger.enabled }}
+        - name: swagger
+          {{- if .Values.swagger.image }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.swagger.image) }}
+          imagePullPolicy: {{ .Values.swagger.image.pullPolicy | quote }}
+          {{- else }}
+          image: {{ template "golang.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          command:
+            - sh
+            - -c
+            - swagger serve -Fswagger --no-open swagger.json
+          {{- end }}
+          env:
+            - name: PORT
+              value: {{ .Values.swagger.port | quote }}
+          ports:
+            - name: swagger
+              containerPort: {{ .Values.swagger.port }}
+        {{- end }}
         - name: app
           image: {{ template "golang.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}

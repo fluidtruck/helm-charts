@@ -42,4 +42,9 @@ spec:
       {{- if eq .Values.service.type "ClusterIP" }}
       nodePort: null
       {{- end }}
+    {{- if .Values.swagger.enabled }}
+    - name: swagger
+      port: {{ .Values.swagger.port }}
+      targetPort: swagger
+    {{- end }}
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
