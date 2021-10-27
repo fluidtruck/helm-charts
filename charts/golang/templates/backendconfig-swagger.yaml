@@ -1,0 +1,15 @@
+{{- if and .Values.swagger.enabled (eq .Values.ingress.class "gce") }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ printf "%s-swagger" .Release.Name | quote }}
+spec:
+  healthCheck:
+    checkIntervalSec: 60
+    timeoutSec: 60
+    healthyThreshold: 1
+    unhealthyThreshold: 10
+    type: HTTP
+    requestPath: /swagger.json
+{{- end }}
+

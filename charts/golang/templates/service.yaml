@@ -6,8 +6,11 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
-  {{- if or .Values.service.annotations .Values.commonAnnotations }}
+  {{- if or .Values.swagger.enabled .Values.service.annotations .Values.commonAnnotations }}
   annotations:
+    {{- if and .Values.swagger.enabled (eq .Values.ingress.class "gce") }}
+    cloud.google.com/backend-config: {{ printf "'{\"ports\":{\"swagger\":\"%s-swagger\"}}'" .Release.Name }}
+    {{- end }}
     {{- if .Values.service.annotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.service.annotations "context" $) | nindent 4 }}
     {{- end }}
@@ -42,4 +45,9 @@ spec:
       {{- if eq .Values.service.type "ClusterIP" }}
       nodePort: null
       {{- end }}
+    {{- if .Values.swagger.enabled }}
+    - name: swagger
+      port: {{ .Values.swagger.port }}
+      targetPort: swagger
+    {{- end }}
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}

@@ -1,0 +1,6 @@
+swagger:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: ellisio/go-swagger
+    tag: "v0.27.0"

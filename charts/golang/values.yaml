@@ -335,3 +335,29 @@ redis:
   architecture: standalone
   auth:
     password: redis
+
+## Swagger Configuration
+##
+swagger:
+  ## Set to true to enable Swagger
+  ##
+  enabled: false
+
+  ## Port
+  ##
+  port: 8081
+
+  ## Ingress
+  ##
+  ingress:
+    hostname: golang-swagger.local
+    annotations: {}
+
+  ## Image
+  ##
+  # image:
+  #   registry: docker.io
+  #   repository: ellisio/go-swagger
+  #   tag: "v0.27.0"
+  #   # pullSecrets:
+  #   #   - myRegistryKeySecretName
