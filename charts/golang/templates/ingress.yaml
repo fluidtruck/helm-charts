@@ -66,15 +66,15 @@ spec:
   {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
+      {{- if .Values.swagger.enabled }}
+      - {{ tpl .Values.swagger.ingress.hostname . | quote }}
+      {{- end }}
       {{- if .Values.ingress.hostname }}
       - {{ tpl .Values.ingress.hostname . | quote }}
       secretName: {{ printf "%s-tls" .Release.Namespace | replace "." "-" }}
       {{- else }}
       - {{ printf "*.%s" (include "golang.ingressRootHostname" .) | quote }}
       secretName: {{ printf "%s-wildcard-tls" .Release.Namespace | replace "." "-" }}
-      {{- end }}
-      {{- if .Values.swagger.enabled }}
-      - {{ tpl .Values.swagger.ingress.hostname . | quote }}
       {{- end }}
   {{- end }}
 {{- end }}
