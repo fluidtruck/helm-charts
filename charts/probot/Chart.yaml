@@ -1,0 +1,18 @@
+apiVersion: v2
+name: probot
+description: A chart for deploying Probot apps.
+icon: https://probot.github.io/assets/img/logo.png
+version: 1.0.0
+appVersion: 12.1.1
+type: application
+keywords:
+  - probot
+maintainers:
+  - name: devops
+    email: devops@fluidtruck.com
+dependencies:
+  - name: common
+    repository: https://fluidtruck.github.io/helm-charts
+    tags:
+      - fluidtruck-common
+    version: 1.x.x

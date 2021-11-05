@@ -1,0 +1,6 @@
+ingress:
+  enabled: true
+  hostname: "{{ .Release.Name }}.local"
+  tls:
+    enabled: true
+    issuer: "testing"
