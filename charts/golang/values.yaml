@@ -78,6 +78,13 @@ podAnnotations: {}
 ##
 podLabels: {}
 
+## Additional k8s Service Account annotations
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+## For example, to add a Workload identity binding
+serviceAccountAnnotations: {}
+  # iam.gke.io/gcp-service-account: example-sa@applications-stage-2535.iam.gserviceaccount.com
+
 ## Configure extra options for liveness and readiness probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 ##
