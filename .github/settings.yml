@@ -35,6 +35,7 @@ branches:
           - boost-security-scan
           - lint
           - test
+          - Semantic Pull Request
       enforce_admins: true
       required_linear_history: true
       restrictions:
