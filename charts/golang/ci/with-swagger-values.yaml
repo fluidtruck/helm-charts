@@ -1,3 +1,6 @@
+ingress:
+  enabled: true
+
 swagger:
   enabled: true
   image:
