@@ -354,12 +354,6 @@ swagger:
   ##
   port: 8081
 
-  ## Ingress
-  ##
-  ingress:
-    hostname: golang-swagger.local
-    annotations: {}
-
   ## Image
   ##
   # image:
