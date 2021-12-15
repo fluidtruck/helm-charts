@@ -24,11 +24,11 @@ image:
 ##
 kubeVersion:
 
-## String to partially override node.fullname template (will maintain the release name)
+## String to partially override golang.fullname template (will maintain the release name)
 ##
 # nameOverride:
 
-## String to fully override node.fullname template
+## String to fully override golang.fullname template
 ##
 # fullnameOverride:
 
@@ -42,7 +42,7 @@ applicationPort: 8090
 
 ## Enables extra ports for the container
 ##
-extraApplicationPorts: []
+extraApplicationPorts: {}
 #   delve: 2345
 
 ## Affinity for pod assignment. Evaluated as a template.
@@ -255,26 +255,36 @@ ingress:
   ##
   enabled: false
 
+  ## Enable to prepend the .Release.Name as a subdomain.
+  ##
+  devMode: false
+
   ## Set this to the required desired IngressClass. Set to false to use your cluster's default ingress.
   ##
   class: nginx
 
-  ## Set this to a specific hostname, and the automatic hostname creations will be skipped.
-  ##
-  # hostname: my-app.fluiddev.io
-
   ## Set this to the domain you want to use.
   ##
-  domain: fluiddev.io
+  domain: fluidtruck.io
 
-  ## The Path to Node.js. You may need to set this to '/*' in order to use this
-  ## with ALB ingress controllers.
+  ## The root path. You may need to set this to '/*' in order to use this with ALB ingress
+  ## controllers.
   ##
   path: /
 
   ## Ingress Path type
   ##
   pathType: ImplementationSpecific
+
+  ## Override API Version (automatically detected if not set)
+  ##
+  # apiVersion:
+
+  ## Ingress annotations done as key:value pairs
+  ## For a full list of possible ingress annotations, please see
+  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
+  ##
+  annotations: {}
 
   ## Configure TLS
   ##
@@ -286,16 +296,6 @@ ingress:
     ## Set this to true in order to add the corresponding annotations for cert-manager
     ##
     issuer: "letsencrypt-staging"
-
-  ## Override API Version (automatically detected if not set)
-  ##
-  # apiVersion:
-
-  ## Ingress annotations done as key:value pairs
-  ## For a full list of possible ingress annotations, please see
-  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
-  ##
-  annotations: {}
 
 ## Configure the hpa resource that enables autoscaling of the deployment
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
@@ -349,10 +349,6 @@ swagger:
   ## Set to true to enable Swagger
   ##
   enabled: false
-
-  ## Port
-  ##
-  port: 8081
 
   ## Image
   ##

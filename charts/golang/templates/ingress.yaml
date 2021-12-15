@@ -24,23 +24,6 @@ metadata:
   {{- end }}
 spec:
   rules:
-    {{- if .Values.ingress.hostname }}
-    - host: {{ tpl .Values.ingress.hostname . | quote }}
-      http:
-        paths:
-          - path: {{ .Values.ingress.path }}
-            {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
-            pathType: {{ .Values.ingress.pathType }}
-            {{- end }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" .) "servicePort" "http" "context" $)  | nindent 14 }}
-          {{- if .Values.swagger.enabled }}
-          - path: /docs
-            {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
-            pathType: {{ .Values.ingress.pathType }}
-            {{- end }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" .) "servicePort" "swagger" "context" $)  | nindent 14 }}
-          {{- end }}
-    {{- else }}
     - host: {{ include "golang.ingressHostname" . | quote }}
       http:
         paths:
@@ -52,20 +35,20 @@ spec:
           {{- if .Values.swagger.enabled }}
           - path: /docs
             {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
-            pathType: {{ .Values.ingress.pathType }}
+            pathType: Prefix
+            {{- end }}
+            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" .) "servicePort" "swagger" "context" $)  | nindent 14 }}
+          - path: /swagger.json
+            {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
+            pathType: Exact
             {{- end }}
             backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" .) "servicePort" "swagger" "context" $)  | nindent 14 }}
           {{- end }}
-    {{- end }}
   {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
-      {{- if .Values.ingress.hostname }}
-      - {{ tpl .Values.ingress.hostname . | quote }}
-      secretName: {{ printf "%s-tls" .Release.Namespace | replace "." "-" }}
-      {{- else }}
+      - {{ include "golang.ingressRootHostname" . | quote }}
       - {{ printf "*.%s" (include "golang.ingressRootHostname" .) | quote }}
-      secretName: {{ printf "%s-wildcard-tls" .Release.Namespace | replace "." "-" }}
-      {{- end }}
+      secretName: {{ printf "%s-tls" .Release.Namespace | replace "." "-" }}
   {{- end }}
 {{- end }}
