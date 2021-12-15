@@ -117,10 +117,10 @@ spec:
           {{- end }}
           env:
             - name: PORT
-              value: {{ .Values.swagger.port | quote }}
+              value: "8081"
           ports:
             - name: swagger
-              containerPort: {{ .Values.swagger.port }}
+              containerPort: 8081
         {{- end }}
         - name: app
           image: {{ template "golang.image" . }}

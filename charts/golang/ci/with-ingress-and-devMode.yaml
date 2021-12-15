@@ -1,6 +1,6 @@
 ingress:
   enabled: true
-  domain: test.local
+  devMode: true
   tls:
     enabled: true
     issuer: "testing"

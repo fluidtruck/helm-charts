@@ -70,19 +70,23 @@ Usage:
 {{- end -}}
 
 {{/*
-Print root hostname to be used other place.
+Print root hostname to be used for the ingress and TLS certificate.
 Usage:
 {{ include "golang.ingressRootHostname" . }}
 */}}
 {{- define "golang.ingressRootHostname" -}}
-{{- printf "%s.%s" .Release.Namespace .Values.ingress.domain -}}
+{{- .Values.ingress.domain -}}
 {{- end -}}
 
 {{/*
-Print hostname for the ingress.
+Print FQDN hostname to be used for the ingress.
 Usage:
 {{ include "golang.ingressHostname" . }}
 */}}
 {{- define "golang.ingressHostname" -}}
+{{- if .Values.ingress.devMode -}}
 {{- printf "%s.%s" .Release.Name (include "golang.ingressRootHostname" .) -}}
+{{- else -}}
+{{- include "golang.ingressRootHostname" . -}}
+{{- end }}
 {{- end -}}

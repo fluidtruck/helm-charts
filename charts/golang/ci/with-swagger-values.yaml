@@ -1,5 +1,8 @@
 ingress:
   enabled: true
+  tls:
+    enabled: true
+    issuer: "testing"
 
 swagger:
   enabled: true
