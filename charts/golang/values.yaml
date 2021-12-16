@@ -78,13 +78,6 @@ podAnnotations: {}
 ##
 podLabels: {}
 
-## Additional k8s Service Account annotations
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-##
-## For example, to add a Workload identity binding
-serviceAccountAnnotations: {}
-  # iam.gke.io/gcp-service-account: example-sa@apps-stage-150c.iam.gserviceaccount.com
-
 ## Configure extra options for liveness and readiness probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 ##
@@ -342,6 +335,22 @@ redis:
   architecture: standalone
   auth:
     password: redis
+
+## Configure the service account
+##
+serviceAccount:
+  create: false
+
+  ## Define a custom service account name
+  ##
+  name: ""
+
+  ## Additional k8s Service Account annotations
+  ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+  ##
+  ## For example, to add a Workload identity binding
+  annotations: {}
+    # iam.gke.io/gcp-service-account: example-sa@apps-stage-150c.iam.gserviceaccount.com
 
 ## Swagger Configuration
 ##
