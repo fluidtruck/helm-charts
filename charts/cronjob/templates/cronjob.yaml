@@ -4,7 +4,7 @@
 apiVersion: {{ include "common.capabilities.cronjob.apiVersion" $top }}
 kind: CronJob
 metadata:
-  name: {{ printf "%s-%s" (include "common.names.fullname" $top) .name | trunc 253 | trimSuffix "-" | quote }}
+  name: {{ printf "%s-%s" (include "common.names.fullname" $top) .name | trunc 52 | trimSuffix "-" | quote }}
   labels: {{- include "common.labels.standard" $top | nindent 4 }}
     cronjob: {{ .name | quote }}
     {{- if $top.Values.commonLabels }}
