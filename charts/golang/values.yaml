@@ -45,6 +45,19 @@ applicationPort: 8090
 extraApplicationPorts: {}
 #   delve: 2345
 
+## Additional volumes for app pod
+##
+extraVolumes: []
+  # - name: example-volume
+  #   secret:
+  #     secretName: mysecret
+
+## Additional volume mounts for app pod
+##
+extraVolumeMounts: []
+  # - name: example-volume
+  #   mountPath: /path/in/container
+
 ## Affinity for pod assignment. Evaluated as a template.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ##
