@@ -78,6 +78,40 @@ entries:
     version: 1.0.0
   cronjob:
   - apiVersion: v2
+    appVersion: 1.2.0
+    created: "2022-02-15T20:49:28.617741642Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - postgresql
+      version: 10.9.1
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - redis
+      version: 14.8.8
+    description: A chart for CronJobs.
+    digest: 140b045681a53ee1524e4a0f1dbfedc906df67b0713c260fe0cd9a78a8c8512d
+    icon: https://contino.github.io/intro-k8/images/kubernetes/cronjob.png
+    keywords:
+    - cronjob
+    maintainers:
+    - email: aellis@fluidtruck.com
+      name: ellisio
+    name: cronjob
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/cronjob-1.2.0/cronjob-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
     appVersion: 1.1.1
     created: "2021-12-17T20:59:22.187620697Z"
     dependencies:
@@ -1291,4 +1325,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/locust-1.0.0/locust-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-18T17:38:55.636087165Z"
+generated: "2022-02-15T20:49:28.618071037Z"
