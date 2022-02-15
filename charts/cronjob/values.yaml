@@ -121,6 +121,22 @@ cronjobs:
     successfulJobsHistoryLimit: 0
     failedJobsHistoryLimit: 0
 
+## Configure the service account
+##
+serviceAccount:
+  create: false
+
+  ## Define a custom service account name
+  ##
+  name: ""
+
+  ## Additional k8s Service Account annotations
+  ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+  ##
+  ## For example, to add a Workload identity binding
+  annotations: {}
+    # iam.gke.io/gcp-service-account: example-sa@apps-stage-150c.iam.gserviceaccount.com
+
 ## Configure the postgresql service
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
 ##
