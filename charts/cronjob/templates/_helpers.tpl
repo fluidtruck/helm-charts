@@ -6,6 +6,17 @@ Return the proper NextJS image name
 {{- end -}}
 
 {{/*
+Return the service account name
+*/}}
+{{- define "cronjob.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+  {{- default (include "common.names.fullname" .) .Values.serviceAccount.name -}}
+{{- else -}}
+  {{- default "default" .Values.serviceAccount.name -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the proper Docker Image Registry Secret Names
 */}}
 {{- define "cronjob.imagePullSecrets" -}}

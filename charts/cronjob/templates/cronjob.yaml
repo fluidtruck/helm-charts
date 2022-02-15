@@ -25,6 +25,7 @@ spec:
             cronjob: {{ .name | quote }}
         spec:
           restartPolicy: OnFailure
+          serviceAccountName: {{ template "cronjob.serviceAccountName" $top }}
           {{- if $top.Values.containerSecurityContext.enabled }}
           securityContext: {{- omit $top.Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
