@@ -10,20 +10,25 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/*
-Kubernetes fluidtruck labels
+Kubernetes FluidTruck labels
 */}}
 {{- define "common.labels.fluidtruck" -}}
-fluidtruck.io/app: {{ .Values.fluidtruck.labels.app }}
-fluidtruck.io/team: {{ .Values.fluidtruck.labels.team }}
-fluidtruck.io/env: {{ .Values.fluidtruck.labels.env }}
+fluidtruck.io/app: {{ .Values.fluidtruck.app }}
+fluidtruck.io/team: {{ .Values.fluidtruck.team }}
+fluidtruck.io/env: {{ .Values.fluidtruck.env }}
 {{- end -}}
 
 {{/*
-Kubernetes github labels
+Kubernetes GitHub labels
 */}}
 {{- define "common.labels.github" -}}
-github.com/pull-request-number: {{ .Values.github.labels.prnumber }}
-github.com/repository: {{ .Values.github.labels.repo }}
+github.com/repository: {{ .Values.github.repo.name }}
+{{ if .Values.pr.number }}
+github.com/branch: {{ .Values.github.pr.branch }}
+github.com/pull-request: {{ .Values.pr.number }}
+{{ else if .Values.release.version }}
+github.com/release: {{ .Values.release.version }}
+{{- end -}}
 {{- end -}}
 
 {{/*

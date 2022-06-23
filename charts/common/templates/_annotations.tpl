@@ -1,10 +1,14 @@
 {{/* vim: set filetype=mustache: */}}
 {{/*
-Kubernetes github annotations
+Kubernetes GitHub annotations
 */}}
 {{- define "common.annotations.github" -}}
-github.com/branch: {{ .Values.github.prbranch }}
-github.com/pull-request: {{ .Values.github.prurl }}
-github.com/pull-request-owner: {{ .Values.github.prowner }}
-github.com/repository: {{ .Values.github.repourl }}
+github.com/branch: {{ .Values.github.branch }}
+github.com/repository-url: {{ .Values.github.repo.url }}
+{{ if .Values.pr.number }}
+github.com/pull-request-url: {{ .Values.pr.url }}
+github.com/pull-request-owner: {{ .Values.pr.owner }}
+{{ else if .Values.release.url }}
+github.com/release-url: {{ .Values.release.url }}
+{{- end -}}
 {{- end -}}
