@@ -23,11 +23,11 @@ Kubernetes GitHub labels
 */}}
 {{- define "common.labels.github" -}}
 github.com/repository: {{ .Values.github.repo.name }}
-{{ if .Values.pr.number }}
+{{ if .Values.github.pr.number }}
 github.com/branch: {{ .Values.github.pr.branch }}
-github.com/pull-request: {{ .Values.pr.number }}
-{{ else if .Values.release.version }}
-github.com/release: {{ .Values.release.version }}
+github.com/pull-request: {{ .Values.github.pr.number }}
+{{ else if .Values.github.release.version }}
+github.com/release: {{ .Values.github.release.version }}
 {{- end -}}
 {{- end -}}
 
