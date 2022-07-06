@@ -335,11 +335,12 @@ hpa:
 postgresql:
   enabled: false
   wait: false
-  postgresqlUsername: postgresql
-  postgresqlPassword: postgresql
-  postgresqlDatabase: postgresql
+  auth:
+    username: postgres
+    password: postgres
+    database: postgres
   image:
-    tag: '13.4.0'
+    tag: '14.2.0'
 
 ## Configure the redis service
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
@@ -382,3 +383,16 @@ swagger:
   #   tag: "v0.27.0"
   #   # pullSecrets:
   #   #   - myRegistryKeySecretName
+
+## FluidTruck labels
+##
+fluidtruck:
+  enabled: false
+
+## GitHub labels and annotations
+##
+github:
+  enabled: false
+  repo: {}
+  pr: {}
+  release: {}

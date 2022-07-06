@@ -7,7 +7,13 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
-  {{- if or .Values.ingress.tls.enabled .Values.ingress.annotations .Values.commonAnnotations }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.ingress.tls.enabled .Values.ingress.annotations .Values.commonAnnotations .Values.github.enabled }}
   annotations:
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.issuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.issuer | quote }}
@@ -16,10 +22,13 @@ metadata:
     kubernetes.io/ingress.class: {{ .Values.ingress.class }}
     {{- end }}
     {{- if .Values.ingress.annotations }}
-    {{- include "common.tplvalues.render" (dict "value" .Values.ingress.annotations "context" $) | nindent 4 }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.ingress.annotations "context" $ ) | nindent 4 }}
     {{- end }}
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.annotations.github" . | nindent 4 }}
     {{- end }}
   {{- end }}
 spec:
@@ -31,18 +40,18 @@ spec:
             {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
             pathType: {{ .Values.ingress.pathType }}
             {{- end }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" .) "servicePort" "http" "context" $)  | nindent 14 }}
+            backend: {{- include "common.ingress.backend" ( dict "serviceName" (include "common.names.fullname" .) "servicePort" "http" "context" $ )  | nindent 14 }}
           {{- if .Values.swagger.enabled }}
           - path: /docs
             {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
             pathType: Prefix
             {{- end }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" .) "servicePort" "swagger" "context" $)  | nindent 14 }}
+            backend: {{- include "common.ingress.backend" ( dict "serviceName" (include "common.names.fullname" .) "servicePort" "swagger" "context" $ )  | nindent 14 }}
           - path: /swagger.json
             {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
             pathType: Exact
             {{- end }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" .) "servicePort" "swagger" "context" $)  | nindent 14 }}
+            backend: {{- include "common.ingress.backend" ( dict "serviceName" (include "common.names.fullname" .) "servicePort" "swagger" "context" $ )  | nindent 14 }}
           {{- end }}
   {{- if .Values.ingress.tls.enabled }}
   tls:
