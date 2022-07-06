@@ -37,6 +37,12 @@ This chart provides a common template helpers which can be used to develop new c
 
 The following table lists the helpers available in the library which are scoped in different` sections.
 
+### Annotations
+
+| Helper identifier              | Description                                          | Expected Input    |
+|--------------------------------|------------------------------------------------------|-------------------|
+| `common.annotations.github`    | Return Kubernetes GitHub annotations                 | `.` Chart context |
+
 ### Capabilities
 
 | Helper identifier                            | Description                                                                                    | Expected Input    |
@@ -71,6 +77,8 @@ The following table lists the helpers available in the library which are scoped 
 |-----------------------------|------------------------------------------------------|-------------------|
 | `common.labels.standard`    | Return Kubernetes standard labels                    | `.` Chart context |
 | `common.labels.matchLabels` | Return the proper Docker Image Registry Secret Names | `.` Chart context |
+| `common.labels.fluidtruck`  | Return Kubernetes FluidTruck labels                  | `.` Chart context |
+| `common.labels.github`      | Return Kubernetes GitHub labels                      | `.` Chart context |
 
 ### Names
 
