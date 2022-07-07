@@ -336,9 +336,9 @@ postgresql:
   enabled: false
   wait: false
   auth:
-    username: postgres
-    password: postgres
-    database: postgres
+    username: postgresql
+    password: postgresql
+    database: postgresql
   image:
     tag: '14.2.0'
 
