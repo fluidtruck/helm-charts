@@ -7,10 +7,19 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
-  {{- if .Values.commonAnnotations }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.commonAnnotations .Values.github.enabled }}
   annotations:
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.annotations.github" . | nindent 4 }}
     {{- end }}
   {{- end }}
 spec:
@@ -25,7 +34,10 @@ spec:
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
         {{- if .Values.podAnnotations }}
-        {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.podAnnotations "context" $ ) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.github.enabled }}
+        {{- include "common.annotations.github" . | nindent 8 }}
         {{- end }}
         {{- if .Values.vault.enabled }}
         vault.hashicorp.com/role: {{ tpl .Values.vault.role . | quote }}
@@ -40,18 +52,24 @@ spec:
         {{- end }}
       labels: {{- include "common.labels.standard" . | nindent 8 }}
         {{- if .Values.podLabels }}
-        {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.podLabels "context" $ ) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.fluidtruck.enabled }}
+        {{- include "common.labels.fluidtruck" . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.github.enabled }}
+        {{- include "common.labels.github" . | nindent 8 }}
         {{- end }}
     spec:
       {{- include "golang.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.affinity }}
-      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.affinity "context" $) | nindent 8 }}
+      affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.affinity "context" $ ) | nindent 8 }}
       {{- end }}
       {{- if .Values.nodeSelector }}
-      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.nodeSelector "context" $ ) | nindent 8 }}
       {{- end }}
       {{- if .Values.tolerations }}
-      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.tolerations "context" $) | nindent 8 }}
+      tolerations: {{- include "common.tplvalues.render" ( dict "value" .Values.tolerations "context" $ ) | nindent 8 }}
       {{- end }}
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName | quote }}
@@ -91,9 +109,9 @@ spec:
             - name: DB_HOST
               value: {{ $dbHost }}
             - name: DB_DATABASE
-              value: {{ .Values.postgresql.postgresqlDatabase }}
+              value: {{ .Values.postgresql.auth.database }}
             - name: DB_USER
-              value: {{ .Values.postgresql.postgresqlUsername }}
+              value: {{ .Values.postgresql.auth.username }}
           args:
             - /mnt/postgresql/wait-for-postgresql.sh
           volumeMounts:
@@ -105,7 +123,7 @@ spec:
         {{- if .Values.swagger.enabled }}
         - name: swagger
           {{- if .Values.swagger.image }}
-          image: {{ include "common.images.image" (dict "imageRoot" .Values.swagger.image) }}
+          image: {{ include "common.images.image" ( dict "imageRoot" .Values.swagger.image ) }}
           imagePullPolicy: {{ .Values.swagger.image.pullPolicy | quote }}
           {{- else }}
           image: {{ template "golang.image" . }}
@@ -143,34 +161,34 @@ spec:
             {{- if .Values.postgresql.enabled }}
             - name: DB_HOST
               value: {{ $dbHost }}
-            - name: DB_USER
-              value: {{ .Values.postgresql.postgresqlUsername }}
             - name: DB_DATABASE
-              value: {{ .Values.postgresql.postgresqlDatabase }}
+              value: {{ .Values.postgresql.auth.database }}
+            - name: DB_USER
+              value: {{ .Values.postgresql.auth.username }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-postgresql
-                  key: postgresql-password
+                  key: password
             - name: DB_URL
               value: postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):5432/$(DB_DATABASE)?sslmode=disable
             {{- end }}
             {{- range $key, $value := .Values.envVars }}
             - name: {{ $key }}
               {{- if or (typeIs "string" $value) (typeIs "float64" $value) (typeIs "bool" $value) }}
-              value: {{ include "common.tplvalues.render" (dict "value" $value "context" $) | quote }}
+              value: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) | quote }}
               {{- else }}
-              {{- include "common.tplvalues.render" (dict "value" $value "context" $) | nindent 14 }}
+              {{- include "common.tplvalues.render" ( dict "value" $value "context" $ ) | nindent 14 }}
               {{- end }}
             {{- end }}
           envFrom:
             {{- if .Values.envVarsCM }}
             - configMapRef:
-                name: {{ include "common.tplvalues.render" (dict "value" .Values.envVarsCM "context" $) }}
+                name: {{ include "common.tplvalues.render" ( dict "value" .Values.envVarsCM "context" $ ) }}
             {{- end }}
             {{- if .Values.envVarsSecret }}
             - secretRef:
-                name: {{ include "common.tplvalues.render" (dict "value" .Values.envVarsSecret "context" $) }}
+                name: {{ include "common.tplvalues.render" ( dict "value" .Values.envVarsSecret "context" $ ) }}
             {{- end }}
           ports:
             - name: http
@@ -208,7 +226,7 @@ spec:
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           {{- end }}
           {{- if .Values.lifecycle }}
-          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycle "context" $) | nindent 12 }}
+          lifecycle: {{- include "common.tplvalues.render" ( dict "value" .Values.lifecycle "context" $ ) | nindent 12 }}
           {{- end }}
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}

@@ -7,13 +7,22 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
-  {{- if or .Values.hpa.annotations .Values.commonAnnotations }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.hpa.annotations .Values.commonAnnotations .Values.github.enabled }}
   annotations:
     {{- if .Values.hpa.annotations }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.hpa.annotations "context" $) | nindent 4 }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.hpa.annotations "context" $ ) | nindent 4 }}
     {{- end }}
     {{- if .Values.commonAnnotations }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $) | nindent 4 }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.annotations.github" . | nindent 4 }}
     {{- end }}
   {{- end }}
 spec:

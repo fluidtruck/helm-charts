@@ -42,7 +42,7 @@ Usage:
 {{ include "golang.waitForPostgresql" . }}
 */}}
 {{- define "golang.waitForPostgresql" -}}
-{{- if and (eq .Values.postgresql.enabled true) (eq .Values.postgresql.wait true) (.Values.postgresql.postgresqlPassword) -}}
+{{- if and (eq .Values.postgresql.enabled true) (eq .Values.postgresql.wait true) (.Values.postgresql.auth.password) -}}
 {{- print "true" -}}
 {{- else -}}
 {{- print "false" -}}
