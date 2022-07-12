@@ -6,7 +6,9 @@ on:
       - main
 
 jobs:
-  chart-releaser:
+  release:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Wait for Previous Runs
@@ -14,9 +16,8 @@ jobs:
 
       - name: Checkout Code
         uses: actions/checkout@v2
-
-      - name: Fetch history
-        run: git fetch --prune --unshallow
+        with:
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -26,7 +27,7 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
-          version: v3.7.0
+          version: v3.9.0
 
       - name: Add dependency chart repos
         run: |
@@ -34,7 +35,7 @@ jobs:
           helm repo add fluidtruck https://fluidtruck.github.io/helm-charts
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.2.1
+        uses: helm/chart-releaser-action@v1.4.0
         with:
           charts_dir: charts
         env:

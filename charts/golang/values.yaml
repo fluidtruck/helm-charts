@@ -40,6 +40,10 @@ replicaCount: 1
 ##
 applicationPort: 8090
 
+## Specify the port where you health checks will be running
+##
+healthPort: 8080
+
 ## Enables extra ports for the container
 ##
 extraApplicationPorts: {}

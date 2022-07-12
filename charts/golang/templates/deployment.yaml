@@ -194,7 +194,7 @@ spec:
             - name: http
               containerPort: {{ .Values.applicationPort }}
             - name: health
-              containerPort: 8080
+              containerPort: {{ .Values.healthPort }}
             {{- range $key, $value := .Values.extraApplicationPorts }}
             - name: {{ $key }}
               containerPort: {{ $value }}
