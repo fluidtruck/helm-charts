@@ -161,6 +161,8 @@ spec:
             {{- if .Values.postgresql.enabled }}
             - name: DB_HOST
               value: {{ $dbHost }}
+            - name: DB_HOST_READ
+              value: {{ $dbHost}}
             - name: DB_DATABASE
               value: {{ .Values.postgresql.auth.database }}
             - name: DB_USER
@@ -183,13 +185,28 @@ spec:
             {{- end }}
           envFrom:
             {{- if .Values.envVarsCM }}
+            {{- if kindIs "string" .Values.envVarsCM }}
             - configMapRef:
                 name: {{ include "common.tplvalues.render" ( dict "value" .Values.envVarsCM "context" $ ) }}
+            {{- else }}
+            {{- range $value := .Values.envVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
+            {{- end }}
+            {{- end }}
             {{- end }}
             {{- if .Values.envVarsSecret }}
+            {{- if kindIs "string" .Values.envVarsSecret }}
             - secretRef:
                 name: {{ include "common.tplvalues.render" ( dict "value" .Values.envVarsSecret "context" $ ) }}
+            {{- else }}
+            {{- range $value := .Values.envVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
             {{- end }}
+            {{- end }}
+            {{- end }}
+
           ports:
             - name: http
               containerPort: {{ .Values.applicationPort }}
