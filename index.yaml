@@ -240,6 +240,40 @@ entries:
     version: 1.0.0
   golang:
   - apiVersion: v2
+    appVersion: 6.2.0
+    created: "2022-07-12T17:27:34.10381635Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - postgresql
+      version: 11.1.28
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - redis
+      version: 15.7.6
+    description: A chart for Golang.
+    digest: 72070120ec8c51e7805f9ba1600b397d889d096d4cf6c1fc725d950ce49232a5
+    icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
+    keywords:
+    - go
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: golang
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/golang-6.2.0/golang-6.2.0.tgz
+    version: 6.2.0
+  - apiVersion: v2
     appVersion: 6.1.0
     created: "2022-07-12T17:18:34.700336503Z"
     dependencies:
@@ -1418,4 +1452,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/locust-1.0.0/locust-1.0.0.tgz
     version: 1.0.0
-generated: "2022-07-12T17:18:34.700774404Z"
+generated: "2022-07-12T17:27:34.10419005Z"
