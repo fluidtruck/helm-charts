@@ -24,10 +24,9 @@ Kubernetes GitHub labels
 {{- define "common.labels.github" -}}
 github.com/repository: {{ .Values.github.repo.name }}
 {{ if .Values.github.pr.number }}
-github.com/branch: {{ .Values.github.pr.branch }}
-github.com/pull-request: {{ .Values.github.pr.number }}
+github.com/pull-request: {{ .Values.github.pr.number | toString | quote }}
 {{ else if .Values.github.release.version }}
-github.com/release: {{ .Values.github.release.version }}
+github.com/release: {{ .Values.github.release.version | toString | quote }}
 {{- end -}}
 {{- end -}}
 
