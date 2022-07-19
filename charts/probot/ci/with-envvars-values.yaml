@@ -1,0 +1,6 @@
+envVars:
+  BOOLEAN_TEST: true
+  NUMBER_TEST: 99
+  FLOAT_TEST: 0.2
+  STRING_TEST: "test"
+  TEMPLATE_TEST: "{{ .Release.Name }}-test"

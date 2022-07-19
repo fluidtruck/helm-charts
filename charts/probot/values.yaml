@@ -1,0 +1,217 @@
+# Default values for probot.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## The image version
+##
+image:
+  registry: us-central1-docker.pkg.dev
+  repository: fluidtruck-artifacts/public/probot
+  tag: 12.1.1
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+
+## Force target Kubernetes version (using Helm capabilites if not set)
+##
+kubeVersion:
+
+## String to partially override node.fullname template (will maintain the release name)
+##
+# nameOverride:
+
+## String to fully override node.fullname template
+##
+# fullnameOverride:
+
+## Specify the port where your application will be running
+##
+applicationPort: 3000
+
+## Affinity for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}
+
+## Node labels for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+
+## Tolerations for pod assignment. Evaluated as a template.
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: {}
+
+## Add labels to all the deployed resources
+##
+commonLabels: {}
+
+## Add annotations to all the deployed resources
+##
+commonAnnotations: {}
+
+## Additional pod annotations
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
+
+## Additional pod labels
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+
+## An array to add extra env vars
+## For example:
+##
+envVars: {}
+  # BEARER_AUTH: true
+  # OTHER_VAR: "foo"
+  # SOME_PASSWORD:
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: some-ref
+  #       key: redis-password
+
+## ConfigMap with extra environment variables
+##
+envVarsCM:
+
+## Secret with extra environment variables
+##
+envVarsSecret:
+
+## SecurityContext configuration
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+##
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001
+  runAsNonRoot: true
+
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+
+## The containers' termination grace period.
+## ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#podspec-v1-core
+##
+terminationGracePeriodSeconds: 30
+
+## The containers' resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+## Vault settings for secrets
+##
+vault:
+  enabled: false
+  role: '{{ .Release.Namespace }}'
+  secrets: []
+    # The below example will use a standardized template
+    # that injects a file formatted in a way that allows
+    # libraries like Viper, or dotenv, to load the file at
+    # runtime.
+    #
+    # - name: env
+    #   path: "devops/go-demo/data/prod/env"
+
+    # The below example shows you how to build your own
+    # template value for the injected Vault file.
+    #
+    # - name: env
+    #   path: "devops/go-demo/data/prod/env"
+    #   value: |-
+    #     {{- range $k, $v := .Data.data -}}
+    #        export {{ $k }}="{{ $v }}"
+    #     {{ end -}}
+
+## The Deployment update strategy
+## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
+##
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 50%
+    maxUnavailable: 0
+
+## Service parameters
+##
+service:
+  ## Provide any additional annotations which may be required. This can be used to
+  ## set the LoadBalancer service type to internal only.
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  annotations: {}
+
+## Configure the ingress resource that allows you to access the service.
+## ref: http://kubernetes.io/docs/user-guide/ingress/
+##
+ingress:
+  ## Set this to a specific hostname, and the automatic hostname creations will be skipped.
+  ##
+  hostname: my-app.fluiddev.io
+
+  ## Configure TLS
+  ##
+  tls:
+    ## Set this to true to enable TLS
+    ##
+    enabled: false
+
+    ## Set this to true in order to add the corresponding annotations for cert-manager
+    ##
+    issuer: "letsencrypt-staging"
+
+  ## Override API Version (automatically detected if not set)
+  ##
+  # apiVersion:
+
+  ## Ingress annotations done as key:value pairs
+  ## For a full list of possible ingress annotations, please see
+  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
+  ##
+  annotations: {}
+
+## Configure the hpa resource that enables autoscaling of the deployment
+## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+##
+hpa:
+  ## Set to true to enable hpa record generation
+  ##
+  enabled: false
+
+  ## The minimum number of replicas to maintain
+  ##
+  minReplicas: 1
+
+  ## The maximum number of replicas to maintain
+  ##
+  maxReplicas: 50
+
+  ## The target CPU utilization percentage
+  ##
+  targetCPUUtilizationPercentage: 40
+
+  ## HPA annotations done as key:value pairs
+  ##
+  annotations: {}

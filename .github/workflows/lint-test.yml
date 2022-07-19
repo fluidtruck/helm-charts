@@ -41,7 +41,34 @@ jobs:
         uses: helm/kind-action@v1.2.0
         with:
           # We need to support K8S v1.18 until we're off the old infra.
+          cluster_name: kind
           node_image: kindest/node:v1.18.19
+
+      - name: Scaffold Kind Config
+        run: |
+          mkdir /tmp/kind
+          cat <<EOF > /tmp/kind/config.json
+          {
+            "auths": { "us-central1-docker.pkg.dev": {} }
+          }
+          EOF
+
+      - name: Authenticate With Google
+        uses: docker/login-action@v1
+        env:
+          DOCKER_CONFIG: /tmp/kind
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.ARTIFACT_REGISTRY_SERVICE_ACCOUNT }}
+
+      - name: Copy Docker Config to Kind
+        run: |
+          for node in $(kind get nodes --name "kind"); do
+            node_name=${node#node/}
+            docker cp /tmp/kind/config.json "${node_name}:/var/lib/kubelet/config.json"
+            docker exec "${node_name}" systemctl restart kubelet.service
+          done
 
       - name: Run chart-testing (install)
         run: ct install --config .github/ct-install.yaml
