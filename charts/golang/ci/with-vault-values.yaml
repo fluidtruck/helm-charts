@@ -1,11 +1,7 @@
 vault:
   enabled: true
   secrets:
-    - name: env
-      path: "secret/data/env"
-      value: |-
-        export NEWRELIC_LICENSE="{{ .Data.data.NEWRELIC_LICENSE }}"
     - name: db-creds
-      path: "secret/data/db"
+      path: "kv/data/db"
       value: |-
         export POSTGRES_URL="postgresql://{{ .Data.data.PGUSER }}:{{ .Data.data.PGPASSWORD }}@postgres/{{ .Data.data.PGDATABASE }}"
