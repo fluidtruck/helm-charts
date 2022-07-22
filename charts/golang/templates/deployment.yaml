@@ -45,7 +45,7 @@ spec:
         vault.hashicorp.com/auth-type: "gcp"
         vault.hashicorp.com/auth-config-type: "iam"
         vault.hashicorp.com/auth-config-service-account: {{ .Values.vault.auth.serviceAccount | quote }}
-        vault.hashicorp.com/role: {{ printf "%s-%s-%s" .Values.vault.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        vault.hashicorp.com/role: {{ printf "%s-%s-%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
         vault.hashicorp.com/agent-inject-secret-newrelic: {{ printf "kv/data/%s/newrelic" .Values.vault.auth.department | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-newrelic: |" }}
           {{ printf "{{- with secret \"kv/data/%s/newrelic\" -}}" .Values.vault.auth.department }}
