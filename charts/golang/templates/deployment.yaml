@@ -40,8 +40,33 @@ spec:
         {{- include "common.annotations.github" . | nindent 8 }}
         {{- end }}
         {{- if .Values.vault.enabled }}
-        vault.hashicorp.com/role: {{ tpl .Values.vault.role . | quote }}
         vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/auth-type: "gcp"
+        vault.hashicorp.com/auth-config-type: "iam"
+        vault.hashicorp.com/auth-config-service-account: {{ .Values.vault.auth.serviceAccount | quote }}
+        vault.hashicorp.com/role: {{ printf "%s-%s-%s" .Values.vault.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        vault.hashicorp.com/agent-inject-secret-newrelic: {{ printf "kv/data/%s/newrelic" .Values.vault.auth.department | quote }}
+        {{ printf "vault.hashicorp.com/agent-inject-template-newrelic: |" }}
+          {{ printf "{{- with secret \"kv/data/%s/newrelic\" -}}" .Values.vault.auth.department }}
+          {{ printf "{{- range $k, $v := .Data.data -}}" }}
+          {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "{{ end -}}" }}
+          {{ printf "{{- end -}}" }}
+        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s/%s/shared" .Values.vault.auth.department .Values.vault.auth.team | quote }}
+        {{ printf "vault.hashicorp.com/agent-inject-template-.env.shared: |" }}
+          {{ printf "{{- with secret \"kv/data/%s/%s/shared\" -}}" .Values.vault.auth.department .Values.vault.auth.team }}
+          {{ printf "{{- range $k, $v := .Data.data -}}" }}
+          {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "{{ end -}}" }}
+          {{ printf "{{- end -}}" }}
+        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s/%s/%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        {{ printf "vault.hashicorp.com/agent-inject-template-.env: |" }}
+          {{ printf "{{- with secret \"kv/data/%s/%s/%s\" -}}" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env }}
+          {{ printf "{{- range $k, $v := .Data.data -}}" }}
+          {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "{{ end -}}" }}
+          {{ printf "{{- end -}}" }}
         {{- range .Values.vault.secrets -}}
         {{- printf "vault.hashicorp.com/agent-inject-secret-%s: \"%s\"" .name .path | nindent 8 }}
         {{- printf "vault.hashicorp.com/agent-inject-template-%s: |" .name | nindent 8 }}
@@ -176,6 +201,17 @@ spec:
               value: postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):5432/$(DB_DATABASE)?sslmode=disable
             - name: DB_URL_READ
               value: "$(DB_URL)"
+            {{- end }}
+            {{- if eq .Values.fluidtruck.env "dev" }}
+            - name: NEW_RELIC_APP_NAME
+              value: {{ printf "%s-%s" .Values.fluidtruck.app .Release.Name | quote }}
+            {{- else }}
+            - name: NEW_RELIC_APP_NAME
+              value: {{ printf "%s-%s" .Values.fluidtruck.app .Values.fluidtruck.env | quote }}
+            {{- end }}
+            {{- if and .Values.fluidtruck.env (not .Values.envVars.ENV) }}
+            - name: ENV
+              value: {{ .Values.fluidtruck.env }}
             {{- end }}
             {{- range $key, $value := .Values.envVars }}
             - name: {{ $key }}

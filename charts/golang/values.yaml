@@ -187,7 +187,10 @@ resources:
 ##
 vault:
   enabled: false
-  role: '{{ .Release.Namespace }}'
+  auth:
+    department: engineering
+    team: devops
+    serviceAccount: soma-sa@project.iam.gserviceaccount.com
   secrets: []
     # The below example will use a standardized template
     # that injects a file formatted in a way that allows
@@ -392,6 +395,9 @@ swagger:
 ##
 fluidtruck:
   enabled: false
+  app: ""
+  team: ""
+  env: ""
 
 ## GitHub labels and annotations
 ##
