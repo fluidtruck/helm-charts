@@ -7,18 +7,24 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
 data:
   wait-for-postgresql.sh: |
     #/bin/sh
 
     set -x;
-    echo "Waiting for Postgres on ${POSTGRESQL_HOST}"
+    echo "Waiting for Postgres on ${DB_HOST}"
 
     ATTEMPTS=0
     STATUS=99
 
     until [ $STATUS -eq 0 ]; do
-      pg_isready -d "${POSTGRESQL_DATABASE}" -h "${POSTGRESQL_HOST}" -U "${POSTGRESQL_USERNAME}" &>/dev/null
+      pg_isready -d "${DB_DATABASE}" -h "${DB_HOST}" -U "${DB_USER}" &>/dev/null
       STATUS=$?
 
       if [ $ATTEMPTS -gt 500 ]; then
