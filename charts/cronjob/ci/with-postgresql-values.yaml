@@ -1,6 +1,3 @@
 postgresql:
   enabled: true
   wait: true
-  postgresqlUsername: fluid
-  postgresqlPassword: password
-  postgresqlDatabase: cronjob

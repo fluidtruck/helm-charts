@@ -1,4 +1,5 @@
 {{- $top := . }}
+{{- $dbHost := include "cronjob.postgresqlHost" . -}}
 {{- range .Values.cronjobs }}
 ---
 apiVersion: {{ include "common.capabilities.cronjob.apiVersion" $top }}
@@ -10,8 +11,20 @@ metadata:
     {{- if $top.Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" $top.Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
-  {{- if $top.Values.commonAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" $top.Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- if $top.Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if $top.Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
+  {{- if or $top.Values.commonAnnotations $top.Values.github.enabled }}
+  annotations:
+    {{- if $top.Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" $top.Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if $top.Values.github.enabled }}
+    {{- include "common.annotations.github" $top | nindent 4 }}
+    {{- end }}
   {{- end }}
 spec:
   schedule: {{ .schedule | quote }}
@@ -21,8 +34,55 @@ spec:
     spec:
       template:
         metadata:
-          labels:
+          labels: {{- include "common.labels.standard" $top | nindent 12 }}
+            {{- if $top.Values.fluidtruck.enabled }}
+            {{- include "common.labels.fluidtruck" $top | nindent 12 }}
+            {{- end }}
+            {{- if $top.Values.github.enabled }}
+            {{- include "common.labels.github" $top | nindent 12 }}
+            {{- end }}
             cronjob: {{ .name | quote }}
+          annotations:
+            {{- if $top.Values.github.enabled }}
+            {{- include "common.annotations.github" $top | nindent 12 }}
+            {{- end }}
+            {{- if $top.Values.vault.enabled }}
+            vault.hashicorp.com/agent-inject: "true"
+            vault.hashicorp.com/agent-inject-status: "update"
+            vault.hashicorp.com/agent-pre-populate-only: "true"
+            vault.hashicorp.com/auth-type: "gcp"
+            vault.hashicorp.com/auth-config-type: "iam"
+            vault.hashicorp.com/auth-config-service-account: {{ $top.Values.vault.auth.serviceAccount | quote }}
+            vault.hashicorp.com/role: {{ printf "%s-%s-%s" $top.Values.vault.auth.department $top.Values.vault.auth.team $top.Values.fluidtruck.env | quote }}
+            vault.hashicorp.com/agent-inject-secret-newrelic: {{ printf "kv/data/%s/newrelic" $top.Values.vault.auth.department | quote }}
+            {{ printf "vault.hashicorp.com/agent-inject-template-newrelic: |" }}
+              {{ printf "{{- with secret \"kv/data/%s/newrelic\" -}}" $top.Values.vault.auth.department }}
+              {{ printf "{{- range $k, $v := .Data.data -}}" }}
+              {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
+              {{ printf "{{ end -}}" }}
+              {{ printf "{{- end -}}" }}
+            vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s/%s/shared" $top.Values.vault.auth.department $top.Values.vault.auth.team | quote }}
+            {{ printf "vault.hashicorp.com/agent-inject-template-.env.shared: |" }}
+              {{ printf "{{- with secret \"kv/data/%s/%s/shared\" -}}" $top.Values.vault.auth.department $top.Values.vault.auth.team }}
+              {{ printf "{{- range $k, $v := .Data.data -}}" }}
+              {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+              {{ printf "{{ end -}}" }}
+              {{ printf "{{- end -}}" }}
+            vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s/%s/%s" $top.Values.vault.auth.department $top.Values.vault.auth.team $top.Values.fluidtruck.env | quote }}
+            {{ printf "vault.hashicorp.com/agent-inject-template-.env: |" }}
+              {{ printf "{{- with secret \"kv/data/%s/%s/%s\" -}}" $top.Values.vault.auth.department $top.Values.vault.auth.team $top.Values.fluidtruck.env }}
+              {{ printf "{{- range $k, $v := .Data.data -}}" }}
+              {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+              {{ printf "{{ end -}}" }}
+              {{ printf "{{- end -}}" }}
+            {{- range $top.Values.vault.secrets -}}
+            {{- printf "vault.hashicorp.com/agent-inject-secret-%s: \"%s\"" .name .path | nindent 12 }}
+            {{- printf "vault.hashicorp.com/agent-inject-template-%s: |" .name | nindent 12 }}
+              {{ printf "{{- with secret \"%s\" -}}" .path }}
+              {{ .value | default (printf "{{- range $k, $v := .Data.data -}}\n   export {{ $k }}=\"{{ $v }}\"\n{{ end -}}") | indent 14 | trim  }}
+              {{ printf "{{- end -}}" }}
+            {{- end }}
+            {{- end }}
         spec:
           restartPolicy: OnFailure
           serviceAccountName: {{ template "cronjob.serviceAccountName" $top }}
@@ -54,15 +114,12 @@ spec:
             - name: wait-for-postgresql
               image: postgres:alpine
               env:
-                - name: POSTGRESQL_HOST
+                - name: DB_HOST
                   value: {{ include "cronjob.postgresqlHost" $top }}
-                - name: POSTGRESQL_USERNAME
-                  value: {{ $top.Values.postgresql.postgresqlUsername }}
-                - name: POSTGRESQL_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ $top.Release.Name }}-postgresql
-                      key: postgresql-password
+                - name: DB_DATABASE
+                  value: {{ $top.Values.postgresql.auth.database }}
+                - name: DB_USER
+                  value: {{ $top.Values.postgresql.auth.username }}
               args:
                 - /mnt/postgresql/wait-for-postgresql.sh
               volumeMounts:
@@ -100,6 +157,36 @@ spec:
                     name: {{ $top.Release.Name }}-redis
                     key: redis-password
               {{- end }}
+              {{- if $top.Values.postgresql.enabled }}
+              - name: DB_HOST
+                value: {{ $dbHost }}
+              - name: DB_HOST_READ
+                value: {{ $dbHost }}
+              - name: DB_DATABASE
+                value: {{ $top.Values.postgresql.auth.database }}
+              - name: DB_USER
+                value: {{ $top.Values.postgresql.auth.username }}
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ $top.Release.Name }}-postgresql
+                    key: password
+              - name: DB_URL
+                value: postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):5432/$(DB_DATABASE)?sslmode=disable
+              - name: DB_URL_READ
+                value: "$(DB_URL)"
+              {{- end }}
+              {{- if eq $top.Values.fluidtruck.env "dev" }}
+              - name: NEW_RELIC_APP_NAME
+                value: {{ printf "%s-%s" $top.Values.fluidtruck.app $top.Release.Name | quote }}
+              {{- else }}
+              - name: NEW_RELIC_APP_NAME
+                value: {{ printf "%s-%s" $top.Values.fluidtruck.app $top.Values.fluidtruck.env | quote }}
+              {{- end }}
+              {{- if and $top.Values.fluidtruck.env (not $top.Values.envVars.ENV) }}
+              - name: ENV
+                value: {{ $top.Values.fluidtruck.env }}
+              {{- end }}
               {{- range $key, $value := $top.Values.envVars }}
               - name: {{ $key }}
                 {{- if or (typeIs "string" $value) (typeIs "float64" $value) (typeIs "bool" $value) }}
@@ -112,12 +199,26 @@ spec:
             {{- if or $top.Values.envVarsCM $top.Values.envVarsSecret }}
             envFrom:
               {{- if $top.Values.envVarsCM }}
+              {{- if kindIs "string" $top.Values.envVarsCM }}
               - configMapRef:
-                  name: {{ include "common.tplvalues.render" (dict "value" $top.Values.envVarsCM "context" $) }}
+                  name: {{ include "common.tplvalues.render" ( dict "value" $top.Values.envVarsCM "context" $ ) }}
+              {{- else }}
+              {{- range $value := $top.Values.envVarsCM }}
+              - configMapRef:
+                  name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
+              {{- end }}
+              {{- end }}
               {{- end }}
               {{- if $top.Values.envVarsSecret }}
+              {{- if kindIs "string" $top.Values.envVarsSecret }}
               - secretRef:
-                  name: {{ include "common.tplvalues.render" (dict "value" $top.Values.envVarsSecret "context" $) }}
+                  name: {{ include "common.tplvalues.render" ( dict "value" $top.Values.envVarsSecret "context" $ ) }}
+              {{- else }}
+              {{- range $value := $top.Values.envVarsSecret }}
+              - secretRef:
+                  name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
+              {{- end }}
+              {{- end }}
               {{- end }}
             {{- end }}
           {{- if or (eq "true" (include "cronjob.waitForRedis" $top)) (eq "true" (include "cronjob.waitForPostgresql" $top)) }}

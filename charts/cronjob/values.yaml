@@ -121,6 +121,56 @@ cronjobs:
     successfulJobsHistoryLimit: 0
     failedJobsHistoryLimit: 0
 
+## Vault settings for secrets
+##
+vault:
+  enabled: false
+  auth:
+    department: engineering
+    team: devops
+    serviceAccount: soma-sa@project.iam.gserviceaccount.com
+  secrets: []
+    # The below example will use a standardized template
+    # that injects a file formatted in a way that allows
+    # libraries like Viper, or dotenv, to load the file at
+    # runtime.
+    #
+    # - name: env
+    #   path: "devops/go-demo/data/prod/env"
+
+    # The below example shows you how to build your own
+    # template value for the injected Vault file.
+    #
+    # - name: env
+    #   path: "devops/go-demo/data/prod/env"
+    #   value: |-
+    #     {{- range $k, $v := .Data.data -}}
+    #        export {{ $k }}="{{ $v }}"
+    #     {{ end -}}
+
+## Configure the postgresql service
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
+##
+postgresql:
+  enabled: false
+  wait: false
+  auth:
+    username: postgresql
+    password: postgresql
+    database: postgresql
+  image:
+    tag: '14.2.0'
+
+## Configure the redis service
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+##
+redis:
+  enabled: false
+  wait: false
+  architecture: standalone
+  auth:
+    password: redis
+
 ## Configure the service account
 ##
 serviceAccount:
@@ -137,24 +187,18 @@ serviceAccount:
   annotations: {}
     # iam.gke.io/gcp-service-account: example-sa@apps-stage-150c.iam.gserviceaccount.com
 
-## Configure the postgresql service
-## ref: https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
+## FluidTruck labels
 ##
-postgresql:
+fluidtruck:
   enabled: false
-  postgresqlUsername: postgresql
-  postgresqlPassword: ""
-  postgresqlDatabase: ""
-  image:
-    tag: 13.4.0-debian-10-r4
-  wait: false
+  app: ""
+  team: ""
+  env: ""
 
-## Configure the redis service
-## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+## GitHub labels and annotations
 ##
-redis:
+github:
   enabled: false
-  password: ""
-  wait: false
-  cluster:
-    enabled: false
+  repo: {}
+  pr: {}
+  release: {}

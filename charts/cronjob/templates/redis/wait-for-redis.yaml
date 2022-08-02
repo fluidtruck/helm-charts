@@ -7,6 +7,12 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
 data:
   wait-for-redis.sh: |
     #/bin/sh
