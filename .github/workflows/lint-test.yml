@@ -7,19 +7,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
+        uses: styfle/cancel-workflow-action@0.10.0
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
           all_but_latest: true
 
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Fetch history
         run: git fetch --prune --unshallow
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.1.0
+        uses: helm/chart-testing-action@v2.2.1
 
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct-lint.yaml
@@ -29,19 +29,18 @@ jobs:
     needs: [lint]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Fetch history
         run: git fetch --prune --unshallow
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.1.0
+        uses: helm/chart-testing-action@v2.2.1
 
       - name: Create kind cluster
-        uses: helm/kind-action@v1.2.0
+        uses: helm/kind-action@v1.3.0
         with:
-          # We need to support K8S v1.18 until we're off the old infra.
-          node_image: kindest/node:v1.18.19
+          node_image: kindest/node:v1.22.9
 
       - name: Run chart-testing (install)
         run: ct install --config .github/ct-install.yaml
