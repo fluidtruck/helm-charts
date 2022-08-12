@@ -12,10 +12,10 @@ metadata:
     {{- include "common.tplvalues.render" ( dict "value" $top.Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
     {{- if $top.Values.fluidtruck.enabled }}
-    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- (include "common.labels.fluidtruck" $top) | nindent 4 }}
     {{- end }}
     {{- if $top.Values.github.enabled }}
-    {{- include "common.labels.github" . | nindent 4 }}
+    {{- (include "common.labels.github" $top) | nindent 4 }}
     {{- end }}
   {{- if or $top.Values.commonAnnotations $top.Values.github.enabled }}
   annotations:
@@ -23,7 +23,7 @@ metadata:
     {{- include "common.tplvalues.render" ( dict "value" $top.Values.commonAnnotations "context" $ ) | nindent 4 }}
     {{- end }}
     {{- if $top.Values.github.enabled }}
-    {{- include "common.annotations.github" $top | nindent 4 }}
+    {{- (include "common.annotations.github" $top) | nindent 4 }}
     {{- end }}
   {{- end }}
 spec:
