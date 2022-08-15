@@ -248,8 +248,10 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.applicationPort }}
+            {{- if ne (toString .Values.healthPort) (toString .Values.applicationPort) }}
             - name: health
               containerPort: {{ .Values.healthPort }}
+            {{- end }}
             {{- range $key, $value := .Values.extraApplicationPorts }}
             - name: {{ $key }}
               containerPort: {{ $value }}
@@ -262,7 +264,7 @@ spec:
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.path }}
-              port: {{ .Values.livenessProbe.port | default "health" }}
+              port: {{ include "golang.livenessProbePort" . }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -273,7 +275,7 @@ spec:
           readinessProbe:
             httpGet:
               path: {{ .Values.readinessProbe.path }}
-              port: {{ .Values.readinessProbe.port | default "health" }}
+              port: {{ include "golang.readinessProbePort" . }}
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
