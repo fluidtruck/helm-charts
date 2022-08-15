@@ -45,12 +45,11 @@ spec:
       {{- else if eq .Values.service.type "ClusterIP" }}
       nodePort: null
       {{- end }}
-    - name: http-legacy
-      port: 8090
-      targetPort: http
-      {{- if eq .Values.service.type "ClusterIP" }}
-      nodePort: null
-      {{- end }}
+    {{- range $key, $value := .Values.extraApplicationPorts }}
+    - name: {{ $key }}
+      port: {{ $value | int }}
+      targetPort: {{ $key }}
+    {{- end }}
     {{- if .Values.swagger.enabled }}
     - name: swagger
       port: 8081

@@ -244,17 +244,14 @@ spec:
             {{- end }}
             {{- end }}
             {{- end }}
-
           ports:
             - name: http
-              containerPort: {{ .Values.applicationPort }}
-            {{- if ne (toString .Values.healthPort) (toString .Values.applicationPort) }}
+              containerPort: {{ .Values.applicationPort | int }}
             - name: health
-              containerPort: {{ .Values.healthPort }}
-            {{- end }}
+              containerPort: {{ .Values.healthPort | int }}
             {{- range $key, $value := .Values.extraApplicationPorts }}
             - name: {{ $key }}
-              containerPort: {{ $value }}
+              containerPort: {{ $value | int }}
             {{- end }}
           {{- if .Values.extraVolumeMounts }}
           volumeMounts:
@@ -264,7 +261,7 @@ spec:
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.path }}
-              port: {{ include "golang.livenessProbePort" . }}
+              port: {{ .Values.livenessProbe.port | default "health" }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -275,7 +272,7 @@ spec:
           readinessProbe:
             httpGet:
               path: {{ .Values.readinessProbe.path }}
-              port: {{ include "golang.readinessProbePort" . }}
+              port: {{ .Values.readinessProbe.port | default "health" }}
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}

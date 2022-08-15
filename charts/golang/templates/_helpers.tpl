@@ -101,33 +101,3 @@ Usage:
 {{- include "golang.ingressRootHostname" . -}}
 {{- end }}
 {{- end -}}
-
-{{/*
-Print the liveness port name.
-Usage:
-{{ include "golang.livenessProbePort" . }}
-*/}}
-{{- define "golang.livenessProbePort" -}}
-{{- if .Values.livenessProbe.port -}}
-{{ .Values.livenessProbe.port }}
-{{- else if eq (toString .Values.healthPort) (toString .Values.applicationPort) -}}
-http
-{{- else -}}
-health
-{{- end }}
-{{- end -}}
-
-{{/*
-Print the readiness port name.
-Usage:
-{{ include "golang.livenessProbePort" . }}
-*/}}
-{{- define "golang.readinessProbePort" -}}
-{{- if .Values.readinessProbe.port -}}
-{{ .Values.readinessProbe.port }}
-{{- else if eq (toString .Values.healthPort) (toString .Values.applicationPort) -}}
-http
-{{- else -}}
-health
-{{- end }}
-{{- end -}}
