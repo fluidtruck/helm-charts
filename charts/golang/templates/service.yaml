@@ -37,6 +37,9 @@ spec:
   loadBalancerSourceRanges: {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
   {{- end }}
   ports:
+    - name: http-legacy
+      port: 8090
+      targetPort: http
     - name: http
       port: {{ .Values.service.port }}
       targetPort: http
