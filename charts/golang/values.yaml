@@ -276,7 +276,7 @@ ingress:
 
   ## Set this to the required desired IngressClass. Set to false to use your cluster's default ingress.
   ##
-  class: nginx
+  class: kong
 
   ## Set this to the domain you want to use.
   ##
@@ -311,6 +311,13 @@ ingress:
     ## Set this to true in order to add the corresponding annotations for cert-manager
     ##
     issuer: "letsencrypt-staging"
+
+  ## Configure Kong
+  ##
+  kong:
+    ## Comma-separated list of Kong plugins to enable
+    ##
+    plugins: "correlation-id"
 
 ## Configure the hpa resource that enables autoscaling of the deployment
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
