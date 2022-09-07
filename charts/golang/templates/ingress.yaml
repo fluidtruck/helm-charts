@@ -18,9 +18,6 @@ metadata:
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.issuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.issuer | quote }}
     {{- end }}
-    {{- if eq .Values.ingress.class "kong" }}
-    konghq.com/plugins: {{ .Values.ingress.kong.plugins | quote }}
-    {{- end }}
     {{- if .Values.ingress.annotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.ingress.annotations "context" $ ) | nindent 4 }}
     {{- end }}
