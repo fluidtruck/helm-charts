@@ -107,7 +107,7 @@ podSecurityContext:
 ##
 cronjobs:
   - name: hello
-    schedule: "*/1 * * * *"
+    schedule: "0 * * * *"
     # image:
       # registry: docker.io
       # repository: alpine
@@ -120,6 +120,7 @@ cronjobs:
       - "date; echo Hello"
     successfulJobsHistoryLimit: 0
     failedJobsHistoryLimit: 0
+    concurrencyPolicy: "Replace"
 
 ## Vault settings for secrets
 ##
