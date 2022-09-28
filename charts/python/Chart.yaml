@@ -1,0 +1,18 @@
+apiVersion: v2
+name: python
+description: A chart for Python.
+icon: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1869px-Python-logo-notext.png
+version: 1.0.0
+appVersion: 1.0.0
+type: application
+keywords:
+  - python
+maintainers:
+  - name: devops
+    email: devops@fluidtruck.com
+dependencies:
+  - name: common
+    repository: https://fluidtruck.github.io/helm-charts
+    tags:
+      - fluidtruck-common
+    version: 1.x.x

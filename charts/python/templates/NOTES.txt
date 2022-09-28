@@ -1,0 +1,9 @@
+To access your application using kubectl port forwarding, use the following command:
+
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} 8000:{{ .Values.service.port }}
+
+Then access your application using your browser, open the following URL:
+
+  http://127.0.0.1:8000
+
+{{- include "python.validateValues" . }}
