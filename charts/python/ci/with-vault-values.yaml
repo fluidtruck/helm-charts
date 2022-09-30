@@ -1,0 +1,7 @@
+vault:
+  enabled: true
+  secrets:
+    - name: db-creds
+      path: "kv/data/db"
+      value: |-
+        export POSTGRES_URL="postgresql://{{ .Data.data.PGUSER }}:{{ .Data.data.PGPASSWORD }}@postgres/{{ .Data.data.PGDATABASE }}"
