@@ -1817,4 +1817,27 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/locust-1.0.0/locust-1.0.0.tgz
     version: 1.0.0
-generated: "2022-09-08T19:14:04.824695317Z"
+  python:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-09-30T14:52:57.060905161Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    description: A chart for Python.
+    digest: 5f9994763ad69990e48b08bd13d085aa4a96f78619ed4d76de2afb202c3f8cfe
+    icon: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1869px-Python-logo-notext.png
+    keywords:
+    - python
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: python
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
+    version: 1.0.0
+generated: "2022-09-30T14:52:57.061247268Z"
