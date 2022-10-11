@@ -18,9 +18,6 @@ metadata:
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.issuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.issuer | quote }}
     {{- end }}
-    {{- if .Values.ingress.class }}
-    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-    {{- end }}
     {{- if .Values.ingress.annotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.ingress.annotations "context" $ ) | nindent 4 }}
     {{- end }}
@@ -32,6 +29,9 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
+  {{- if .Values.ingress.class }}
+  ingressClassName: {{ .Values.ingress.class }}
+  {{- end }}
   rules:
     - host: {{ include "golang.ingressHostname" . | quote }}
       http:

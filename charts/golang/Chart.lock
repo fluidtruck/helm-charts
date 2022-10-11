@@ -1,12 +1,12 @@
 dependencies:
 - name: common
   repository: https://fluidtruck.github.io/helm-charts
-  version: 1.2.1
+  version: 1.2.2
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 11.1.28
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 15.7.6
-digest: sha256:49f719bac443393e22afc204baeb1b5b8df360d615e0da25b3335543184ab3e7
-generated: "2022-07-14T14:06:05.876767-04:00"
+digest: sha256:f8ee09eb3a37a812fcadc46bfcd3737794244b3d1347a5a3c1872f339d87bff7
+generated: "2022-10-07T11:50:29.361562-04:00"

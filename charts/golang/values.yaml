@@ -276,7 +276,7 @@ ingress:
 
   ## Set this to the required desired IngressClass. Set to false to use your cluster's default ingress.
   ##
-  class: nginx
+  class: ambassador
 
   ## Set this to the domain you want to use.
   ##

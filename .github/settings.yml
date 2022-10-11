@@ -13,19 +13,27 @@ repository:
   allow_merge_commit: false
   allow_rebase_merge: false
   allow_auto_merge: false
-  delete_brach_on_merge: true
+  delete_branch_on_merge: true
+
+  enable_vulnerability_alerts: true
+  enable_automated_security_fixes: true
 
 collaborators:
   - username: fluid-devbot
     permission: admin
 
 teams:
+  - name: security
+    permission: admin
   - name: devops
     permission: admin
 
 branches:
   - name: main
     protection:
+      enforce_admins: true
+      required_linear_history: true
+      required_signatures: false
       required_pull_request_reviews:
         required_approving_review_count: 1
         dismiss_stale_reviews: true
@@ -35,8 +43,8 @@ branches:
           - lint
           - test
           - Semantic Pull Request
-      enforce_admins: true
-      required_linear_history: true
       restrictions:
-        users: [fluid-devbot]
-        teams: [devops]
+        users:
+          - fluid-devbot
+        teams:
+          - devops
