@@ -1,0 +1,29 @@
+{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v2/Mapping") .Values.api.enabled }}
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: {{ printf "%s-api" include "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.ingress.tls.enabled .Values.ingress.annotations .Values.commonAnnotations .Values.github.enabled }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.annotations.github" . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  hostname: {{ include "golang.apiHostname" . | quote }}
+  prefix: {{ include "golang.apiPrefix" . | quote }}
+  service: {{ printf "%s-tls" .Release.Namespace | replace "." "-" }}
+{{- end }}
