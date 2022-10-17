@@ -31,7 +31,7 @@ teams:
 branches:
   - name: main
     protection:
-      enforce_admins: true
+      enforce_admins: false
       required_linear_history: true
       required_signatures: false
       required_pull_request_reviews:
