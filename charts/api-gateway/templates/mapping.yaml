@@ -1,0 +1,31 @@
+{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v2/Mapping")}}
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: {{ printf "%s-root" (include "common.names.fullname" .) }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.apiGateway.annotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.apiGateway.annotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.annotations.github" . | nindent 4 }}
+    {{- end }}
+spec:
+  hostname: {{ .Values.apiGateway.hostname | quote }}
+  prefix: {{ .Values.apiGateway.prefix | quote }}
+  service: {{ .Values.apiGateway.service | quote }}
+  rewrite: {{ .Values.apiGateway.rewrite | default "/" | quote }}
+{{- end }}

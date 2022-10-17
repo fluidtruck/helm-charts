@@ -1,0 +1,4 @@
+{{- $protocol := ternary "https" "http" .Values.apiGateway.tls.enabled }}
+To access your application using your browser, open the following URL(s)
+
+  {{ $protocol }}://{{ .Values.apiGateway.hostname }}

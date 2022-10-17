@@ -1,0 +1,17 @@
+apiVersion: v2
+name: api-gateway
+description: A chart for api-gateway.
+version: 1.0.0
+appVersion: 1.0.0
+type: application
+keywords:
+  - api-gateway
+maintainers:
+  - name: devops
+    email: devops@fluidtruck.com
+dependencies:
+  - name: common
+    repository: https://fluidtruck.github.io/helm-charts
+    tags:
+      - fluidtruck-common
+    version: 1.x.x
