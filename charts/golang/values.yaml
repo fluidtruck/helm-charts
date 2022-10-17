@@ -406,3 +406,9 @@ github:
   repo: {}
   pr: {}
   release: {}
+
+## API gateway
+api:
+  enabled: false
+  hostname: ""
+  path: ""
