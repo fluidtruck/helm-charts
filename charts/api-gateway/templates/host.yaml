@@ -27,6 +27,6 @@ spec:
   hostname: {{ .Values.apiGateway.hostname | quote }}
   {{- if .Values.apiGateway.tls.enabled }}
   tlsSecret:
-    name: {{ printf "%s-tls" .Release.Namespace | replace "." "-" }}
+    name: {{ printf "%s-tls" .Release.Name | replace "." "-" }}
   {{- end }}
 {{- end }}

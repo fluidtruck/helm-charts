@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ printf "%s-tls" .Release.Namespace | replace "." "-" }}
+  name: {{ printf "%s-tls" .Release.Name | replace "." "-" }}
 spec:
   dnsNames:
   - {{ .Values.apiGateway.hostname | quote }}
@@ -11,7 +11,7 @@ spec:
     group: cert-manager.io
     kind: ClusterIssuer
     name: {{ .Values.apiGateway.tls.issuer | quote }}
-  secretName: {{ printf "%s-tls" .Release.Namespace | replace "." "-" }}
+  secretName: {{ printf "%s-tls" .Release.Name | replace "." "-" }}
   usages:
   - digital signature
   - key encipherment
