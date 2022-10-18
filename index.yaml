@@ -2,6 +2,27 @@ apiVersion: v1
 entries:
   api-gateway:
   - apiVersion: v2
+    appVersion: 1.0.1
+    created: "2022-10-18T14:37:25.1665902Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    description: A chart for api-gateway.
+    digest: ca076df512d6fd7c5cbdc0e1f02f070555b14edf6d9cfdd0241c4e66e74d5383
+    keywords:
+    - api-gateway
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: api-gateway
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/api-gateway-1.0.1/api-gateway-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2022-10-17T21:50:06.048998127Z"
     dependencies:
@@ -1989,4 +2010,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
     version: 1.0.0
-generated: "2022-10-17T21:50:06.049383122Z"
+generated: "2022-10-18T14:37:25.166958502Z"
