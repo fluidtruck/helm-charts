@@ -312,6 +312,25 @@ ingress:
     ##
     issuer: "letsencrypt-staging"
 
+## API Gateway
+##
+gateway:
+  ## Set to true to enable api gateway endpoint.
+  ##
+  enabled: false
+
+  ## Set this to the hostname you want to use.
+  ##
+  hostname: ""
+
+  ## The URL prefix identifying your resource.
+  ##
+  prefix: ""
+
+  ## Extra annotations.
+  ##
+  annotations: {}
+
 ## Configure the hpa resource that enables autoscaling of the deployment
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 ##
