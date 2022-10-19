@@ -1,4 +1,4 @@
-{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v2/TLSContext") .Values.ingress.enabled .Values.ingress.tls.enabled (eq .Values.ingress.class "ambassador")}}
+{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v3alpha1/TLSContext") .Values.ingress.enabled .Values.ingress.tls.enabled (eq .Values.ingress.class "ambassador") }}
 apiVersion: getambassador.io/v3alpha1
 kind: TLSContext
 metadata:
@@ -13,7 +13,7 @@ metadata:
     {{- if .Values.github.enabled }}
     {{- include "common.labels.github" . | nindent 4 }}
     {{- end }}
-  {{- if or .Values.ingress.tls.enabled .Values.ingress.annotations .Values.commonAnnotations .Values.github.enabled }}
+  {{- if or .Values.commonAnnotations .Values.github.enabled }}
   annotations:
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}

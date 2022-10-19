@@ -1,8 +1,8 @@
-{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v3alpha1/Host")}}
+{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v3alpha1/Mapping") .Values.gateway.enabled }}
 apiVersion: getambassador.io/v3alpha1
-kind: Host
+kind: Mapping
 metadata:
-  name: {{ include "common.names.fullname" . }}
+  name: {{ .Values.gateway.hostname | replace "." "-" | trunc 63 |  }}-{{ .Values.gateway.prefix | default .Release.Name }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
@@ -13,9 +13,10 @@ metadata:
     {{- if .Values.github.enabled }}
     {{- include "common.labels.github" . | nindent 4 }}
     {{- end }}
+  {{- if or .Values.gateway.annotations .Values.commonAnnotations .Values.github.enabled }}
   annotations:
-    {{- if .Values.apiGateway.annotations }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.apiGateway.annotations "context" $ ) | nindent 4 }}
+    {{- if .Values.gateway.annotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.gateway.annotations "context" $ ) | nindent 4 }}
     {{- end }}
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
@@ -23,10 +24,9 @@ metadata:
     {{- if .Values.github.enabled }}
     {{- include "common.annotations.github" . | nindent 4 }}
     {{- end }}
-spec:
-  hostname: {{ .Values.apiGateway.hostname | quote }}
-  {{- if .Values.apiGateway.tls.enabled }}
-  tlsSecret:
-    name: {{ printf "%s-tls" .Release.Name | replace "." "-" }}
   {{- end }}
+spec:
+  hostname: {{ .Values.gateway.hostname | quote }}
+  prefix: /{{ .Values.gateway.prefix | default .Release.Name }}
+  service: {{ template "common.names.fullname" . }}:{{ .Values.applicationPort | int }}
 {{- end }}

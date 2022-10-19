@@ -1,4 +1,4 @@
-{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v2/Mapping")}}
+{{- if and (.Capabilities.APIVersions.Has "getambassador.io/v3alpha1/Mapping")}}
 apiVersion: getambassador.io/v3alpha1
 kind: Mapping
 metadata:
