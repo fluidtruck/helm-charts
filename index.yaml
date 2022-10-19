@@ -2,6 +2,27 @@ apiVersion: v1
 entries:
   api-gateway:
   - apiVersion: v2
+    appVersion: 1.0.2
+    created: "2022-10-19T19:33:17.913983169Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    description: A chart for api-gateway.
+    digest: aed90ee383a9c68f1ff24cbe09a3256c307189eea2ee121b07246edd3e7b344b
+    keywords:
+    - api-gateway
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: api-gateway
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/api-gateway-1.0.2/api-gateway-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
     appVersion: 1.0.1
     created: "2022-10-18T14:37:25.1665902Z"
     dependencies:
@@ -468,6 +489,40 @@ entries:
     - https://github.com/fluidtruck/helm-charts/releases/download/cronjob-1.0.0/cronjob-1.0.0.tgz
     version: 1.0.0
   golang:
+  - apiVersion: v2
+    appVersion: 7.2.0
+    created: "2022-10-19T19:33:18.079859717Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - postgresql
+      version: 11.1.28
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - redis
+      version: 15.7.6
+    description: A chart for Golang.
+    digest: d13183a28e44c28d8f87e46018ac5321ad6c5595984121866f71a1752f2b6a13
+    icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
+    keywords:
+    - go
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: golang
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/golang-7.2.0/golang-7.2.0.tgz
+    version: 7.2.0
   - apiVersion: v2
     appVersion: 7.1.1
     created: "2022-10-13T20:54:30.438523941Z"
@@ -2010,4 +2065,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
     version: 1.0.0
-generated: "2022-10-18T14:37:25.166958502Z"
+generated: "2022-10-19T19:33:18.080175821Z"
