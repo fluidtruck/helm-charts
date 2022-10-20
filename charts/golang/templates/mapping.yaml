@@ -27,6 +27,6 @@ metadata:
   {{- end }}
 spec:
   hostname: {{ .Values.gateway.hostname | quote }}
-  prefix: /{{ .Values.gateway.prefix | default .Release.Name }}
+  prefix: /{{ .Values.gateway.prefix | default .Release.Name }}/
   service: {{ template "common.names.fullname" . }}:{{ .Values.applicationPort | int }}
 {{- end }}
