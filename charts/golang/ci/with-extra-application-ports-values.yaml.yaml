@@ -1,2 +1,3 @@
 extraApplicationPorts:
-  dlv: 2345
+  - name: delve
+    port: 2345

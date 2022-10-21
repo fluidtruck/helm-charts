@@ -249,9 +249,9 @@ spec:
               containerPort: {{ .Values.applicationPort | int }}
             - name: health
               containerPort: {{ .Values.healthPort | int }}
-            {{- range $key, $value := .Values.extraApplicationPorts }}
-            - name: {{ $key }}
-              containerPort: {{ $value | int }}
+            {{- range .Values.extraApplicationPorts }}
+            - name: {{ .name | quote }}
+              containerPort: {{ .port | int }}
             {{- end }}
           {{- if .Values.extraVolumeMounts }}
           volumeMounts:
