@@ -46,8 +46,10 @@ healthPort: 8080
 
 ## Enables extra ports for the container
 ##
-extraApplicationPorts: {}
-#   delve: 2345
+extraApplicationPorts: []
+#   - name: delve
+#     port: 2345
+#     appProtocol: http
 
 ## Additional volumes for app pod
 ##
@@ -229,6 +231,15 @@ service:
   ## HTTP Port
   ##
   port: 80
+
+  ## App Protocol
+  ##
+  ## - http
+  ## - grpc (Default)
+  ##
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#application-protocol
+  ##
+  appProtocol: grpc
 
   ## clusterIP: ""
   ## loadBalancerIP for the Node Service (optional, cloud specific)
