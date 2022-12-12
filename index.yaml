@@ -217,6 +217,40 @@ entries:
     version: 1.0.0
   cronjob:
   - apiVersion: v2
+    appVersion: 2.0.4
+    created: "2022-12-12T18:58:14.463413914Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - postgresql
+      version: 11.1.28
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - redis
+      version: 15.7.6
+    description: A chart for CronJobs.
+    digest: 4da9439adaabc699e6441924be3c22d6165e6b763e1116f0d976366b7783e29d
+    icon: https://contino.github.io/intro-k8/images/kubernetes/cronjob.png
+    keywords:
+    - cronjob
+    maintainers:
+    - email: aellis@fluidtruck.com
+      name: ellisio
+    name: cronjob
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/cronjob-2.0.4/cronjob-2.0.4.tgz
+    version: 2.0.4
+  - apiVersion: v2
     appVersion: 2.0.3
     created: "2022-10-13T20:54:30.140736063Z"
     dependencies:
@@ -2133,4 +2167,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
     version: 1.0.0
-generated: "2022-10-21T17:35:05.727843022Z"
+generated: "2022-12-12T18:58:14.463726316Z"
