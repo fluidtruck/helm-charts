@@ -145,7 +145,6 @@ spec:
             {{- else }}
             command: {{- include "common.tplvalues.render" (dict "value" .command "context" $) | nindent 14 }}
             {{- end }}
-            {{- if or $top.Values.redis.enabled (gt (len $top.Values.envVars) 0) }}
             env:
               {{- if $top.Values.redis.enabled }}
               - name: REDIS_HOST
@@ -196,7 +195,6 @@ spec:
                 {{- include "common.tplvalues.render" (dict "value" $value "context" $) | nindent 14 }}
                 {{- end }}
               {{- end }}
-            {{- end }}
             {{- if or $top.Values.envVarsCM $top.Values.envVarsSecret }}
             envFrom:
               {{- if $top.Values.envVarsCM }}
