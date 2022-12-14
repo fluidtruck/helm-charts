@@ -118,8 +118,8 @@ cronjobs:
       - sh
       - -c
       - "date; echo Hello"
-    successfulJobsHistoryLimit: 0
-    failedJobsHistoryLimit: 0
+    successfulJobsHistoryLimit: 2
+    failedJobsHistoryLimit: 2
     concurrencyPolicy: "Replace"
 
 ## Vault settings for secrets

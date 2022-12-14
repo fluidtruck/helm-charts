@@ -28,9 +28,9 @@ metadata:
   {{- end }}
 spec:
   schedule: {{ .schedule | quote }}
-  concurrencyPolicy: {{ .concurrencyPolicy | quote }}
-  successfulJobsHistoryLimit: {{ default "0" .successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ default "0" .failedJobsHistoryLimit }}
+  concurrencyPolicy: {{ .concurrencyPolicy | default "Replace" | quote }}
+  successfulJobsHistoryLimit: {{ .successfulJobsHistoryLimit | default "2" }}
+  failedJobsHistoryLimit: {{ .failedJobsHistoryLimit | default "2" }}
   jobTemplate:
     spec:
       template:
