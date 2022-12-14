@@ -2,8 +2,8 @@ apiVersion: v2
 name: cronjob
 description: A chart for CronJobs.
 icon: https://contino.github.io/intro-k8/images/kubernetes/cronjob.png
-version: 2.0.4
-appVersion: 2.0.4
+version: 2.0.5
+appVersion: 2.0.5
 type: application
 keywords:
   - cronjob
