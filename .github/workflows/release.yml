@@ -32,6 +32,7 @@ jobs:
       - name: Add dependency chart repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add bitnami-full https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
           helm repo add fluidtruck https://fluidtruck.github.io/helm-charts
 
       - name: Run chart-releaser
