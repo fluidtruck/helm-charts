@@ -212,6 +212,15 @@ vault:
     #        export {{ $k }}="{{ $v }}"
     #     {{ end -}}
 
+## Doppler settings for secrets
+##
+doppler:
+  enabled: false
+  reload: false
+  auth:
+    department: engineering
+    team: devops
+
 ## The Deployment update strategy
 ## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
 ##
