@@ -3,10 +3,10 @@ dependencies:
   repository: https://fluidtruck.github.io/helm-charts
   version: 1.2.2
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
   version: 11.1.28
 - name: redis
-  repository: https://charts.bitnami.com/bitnami
+  repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
   version: 15.7.6
-digest: sha256:f8ee09eb3a37a812fcadc46bfcd3737794244b3d1347a5a3c1872f339d87bff7
-generated: "2022-10-07T11:50:29.361562-04:00"
+digest: sha256:79c2236ecb9e45751c148bcbf8a5f911a4fe1997431395ec5d9397840c225337
+generated: "2023-01-20T14:07:08.398754-05:00"

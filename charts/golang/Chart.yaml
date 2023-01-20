@@ -2,8 +2,8 @@ apiVersion: v2
 name: golang
 description: A chart for Golang.
 icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
-version: 8.0.0
-appVersion: 8.0.0
+version: 9.0.0
+appVersion: 9.0.0
 type: application
 keywords:
   - go
@@ -17,13 +17,13 @@ dependencies:
       - fluidtruck-common
     version: 1.x.x
   - name: postgresql
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
     tags:
       - postgresql
     version: "11.1.28"
     condition: postgresql.enabled
   - name: redis
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
     tags:
       - redis
     version: "15.7.6"

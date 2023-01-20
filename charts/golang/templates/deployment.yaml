@@ -13,13 +13,16 @@ metadata:
     {{- if .Values.github.enabled }}
     {{- include "common.labels.github" . | nindent 4 }}
     {{- end }}
-  {{- if or .Values.commonAnnotations .Values.github.enabled }}
+  {{- if or .Values.commonAnnotations .Values.github.enabled .Values.doppler.enabled }}
   annotations:
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
     {{- end }}
     {{- if .Values.github.enabled }}
     {{- include "common.annotations.github" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.doppler.enabled }}
+    secrets.doppler.com/reload: {{ .Values.doppler.reload }}
     {{- end }}
   {{- end }}
 spec:
@@ -232,6 +235,16 @@ spec:
                 name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
             {{- end }}
             {{- end }}
+            {{- end }}
+            {{- if .Values.doppler.enabled }}
+            - secretRef:
+                name: {{ printf "doppler-%s-shared-secret" .Values.doppler.auth.department }}
+            - secretRef:
+                name: {{ printf "doppler-%s-%s-secret" .Values.doppler.auth.department .Values.fluidtruck.env }}
+            - secretRef:
+                name: {{ printf "doppler-%s-shared-secret" .Values.doppler.auth.team }}
+            - secretRef:
+                name: {{ printf "doppler-%s-%s-secret" .Values.doppler.auth.team .Values.fluidtruck.env }}
             {{- end }}
             {{- if .Values.envVarsSecret }}
             {{- if kindIs "string" .Values.envVarsSecret }}

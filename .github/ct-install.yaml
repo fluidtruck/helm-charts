@@ -7,4 +7,5 @@ excluded-charts:
   - common
 chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
+  - bitnami-full=https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
   - fluidtruck=https://fluidtruck.github.io/helm-charts
