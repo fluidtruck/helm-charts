@@ -22,7 +22,7 @@ metadata:
     {{- include "common.annotations.github" . | nindent 4 }}
     {{- end }}
     {{- if .Values.doppler.enabled }}
-    secrets.doppler.com/reload: {{ .Values.doppler.reload }}
+    secrets.doppler.com/reload: {{ .Values.doppler.reload | quote }}
     {{- end }}
   {{- end }}
 spec:
