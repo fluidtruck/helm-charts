@@ -242,6 +242,40 @@ entries:
     version: 1.0.0
   cronjob:
   - apiVersion: v2
+    appVersion: 2.1.0
+    created: "2023-04-04T21:43:38.162926353Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      tags:
+      - postgresql
+      version: 11.1.28
+    - condition: redis.enabled
+      name: redis
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      tags:
+      - redis
+      version: 15.7.6
+    description: A chart for CronJobs.
+    digest: 156a9b7ba5680dba039c4e021e0f073d4ec6750fc406698aab00ce84278300f7
+    icon: https://contino.github.io/intro-k8/images/kubernetes/cronjob.png
+    keywords:
+    - cronjob
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: cronjob
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/cronjob-2.1.0/cronjob-2.1.0.tgz
+    version: 2.1.0
+  - apiVersion: v2
     appVersion: 2.0.4
     created: "2022-12-12T18:58:14.463413914Z"
     dependencies:
@@ -548,6 +582,40 @@ entries:
     - https://github.com/fluidtruck/helm-charts/releases/download/cronjob-1.0.0/cronjob-1.0.0.tgz
     version: 1.0.0
   golang:
+  - apiVersion: v2
+    appVersion: 9.2.0
+    created: "2023-04-04T21:43:38.336118581Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      tags:
+      - postgresql
+      version: 11.1.28
+    - condition: redis.enabled
+      name: redis
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      tags:
+      - redis
+      version: 15.7.6
+    description: A chart for Golang.
+    digest: f74e3e5842c3b826c757fed455260a806f786ab9c2dc1c1a7de60d594b50bdbe
+    icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
+    keywords:
+    - go
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: golang
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/golang-9.2.0/golang-9.2.0.tgz
+    version: 9.2.0
   - apiVersion: v2
     appVersion: 9.1.0
     created: "2023-03-07T00:28:06.482739518Z"
@@ -2294,4 +2362,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
     version: 1.0.0
-generated: "2023-04-04T19:57:02.301833984Z"
+generated: "2023-04-04T21:43:38.336880942Z"
