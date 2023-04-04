@@ -2,8 +2,8 @@ apiVersion: v2
 name: common
 description: A Library Helm Chart for grouping common logic between Fluid Truck charts. This chart is not deployable by itself.
 # Please make sure that version and appVersion are always the same.
-version: 1.2.2
-appVersion: 1.2.2
+version: 1.3.0
+appVersion: 1.3.0
 type: library
 keywords:
   - common
@@ -12,8 +12,8 @@ keywords:
   - function
   - fluidtruck
 maintainers:
-  - name: ellisio
-    email: aellis@fluidtruck.com
+  - name: devops
+    email: devops@fluidtruck.com
 home: https://github.com/fluidtruck/helm-charts/tree/main/charts/common
 icon: https://storage.googleapis.com/fluid-tidal-assets-stage/mclovin.jpg
 sources:
