@@ -48,7 +48,7 @@ spec:
         vault.hashicorp.com/auth-type: "gcp"
         vault.hashicorp.com/auth-config-type: "iam"
         vault.hashicorp.com/auth-config-service-account: {{ .Values.vault.auth.serviceAccount | quote }}
-        vault.hashicorp.com/role: {{ printf "%s-%s-%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        vault.hashicorp.com/role: {{ include "common.vault.role" ( dict "vault" .Values.vault "env" .Values.fluidtruck.env ) | quote }}
         vault.hashicorp.com/agent-inject-secret-newrelic: {{ printf "kv/data/%s/newrelic" .Values.vault.auth.department | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-newrelic: |" }}
           {{ printf "{{- with secret \"kv/data/%s/newrelic\" -}}" .Values.vault.auth.department }}
@@ -56,16 +56,16 @@ spec:
           {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}
           {{ printf "{{- end -}}" }}
-        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s/%s/shared" .Values.vault.auth.department .Values.vault.auth.team | quote }}
+        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s" ( include "common.vault.path" ( dict "vault" .Values.vault "name" "shared" ) ) | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-.env.shared: |" }}
-          {{ printf "{{- with secret \"kv/data/%s/%s/shared\" -}}" .Values.vault.auth.department .Values.vault.auth.team }}
+          {{ printf "{{- with secret \"kv/data/%s\" -}}" ( include "common.vault.path" ( dict "vault" .Values.vault "name" "shared" ) ) }}
           {{ printf "{{- range $k, $v := .Data.data -}}" }}
           {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}
           {{ printf "{{- end -}}" }}
-        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s/%s/%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s" ( include "common.vault.path" ( dict "vault" .Values.vault "name" .Values.fluidtruck.env ) ) | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-.env: |" }}
-          {{ printf "{{- with secret \"kv/data/%s/%s/%s\" -}}" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env }}
+          {{ printf "{{- with secret \"kv/data/%s\" -}}" ( include "common.vault.path" ( dict "vault" .Values.vault "name" .Values.fluidtruck.env ) ) }}
           {{ printf "{{- range $k, $v := .Data.data -}}" }}
           {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}

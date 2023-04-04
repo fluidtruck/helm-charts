@@ -192,6 +192,7 @@ vault:
   auth:
     department: engineering
     team: devops
+    service: ''
     serviceAccount: soma-sa@project.iam.gserviceaccount.com
   secrets: []
     # The below example will use a standardized template
