@@ -56,7 +56,7 @@ spec:
   {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
-      {{- if not .Value.fluidtruck.env "dev" -}}
+      {{- if ne .Value.fluidtruck.env "dev" -}}
       - {{ include "golang.ingressRootHostname" . | quote }}
       {{- end }}
       - {{ printf "*.%s" (include "golang.ingressRootHostname" .) | quote }}
