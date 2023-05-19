@@ -581,6 +581,29 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/cronjob-1.0.0/cronjob-1.0.0.tgz
     version: 1.0.0
+  dotnet:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-05-19T16:46:14.023613454Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    description: A chart for Dotnet.
+    digest: fbcfe9fb5999b90a2c75736ba5efc0f680da56501c24e4f3c49be6c1344d7372
+    icon: https://github.com/dotnet/brand/blob/master/logo/dotnet-logo.svg
+    keywords:
+    - dotnet
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: dotnet
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/dotnet-1.0.0/dotnet-1.0.0.tgz
+    version: 1.0.0
   golang:
   - apiVersion: v2
     appVersion: 9.2.4
@@ -2498,4 +2521,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
     version: 1.0.0
-generated: "2023-04-27T17:35:34.909628191Z"
+generated: "2023-05-19T16:46:14.023977154Z"
