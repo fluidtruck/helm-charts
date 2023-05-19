@@ -1,0 +1,200 @@
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "common.names.fullname" . }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.fluidtruck.enabled }}
+    {{- include "common.labels.fluidtruck" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.labels.github" . | nindent 4 }}
+    {{- end }}
+  {{- if or .Values.commonAnnotations .Values.github.enabled }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.github.enabled }}
+    {{- include "common.annotations.github" . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
+  {{- if .Values.strategy }}
+  strategy: {{- include "common.tplvalues.render" ( dict "value" .Values.strategy "context" $ ) | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+        {{- if .Values.podAnnotations }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.podAnnotations "context" $ ) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.github.enabled }}
+        {{- include "common.annotations.github" . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.vault.enabled }}
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-status: "update"
+        vault.hashicorp.com/auth-type: "gcp"
+        vault.hashicorp.com/auth-config-type: "iam"
+        vault.hashicorp.com/auth-config-service-account: {{ .Values.vault.auth.serviceAccount | quote }}
+        vault.hashicorp.com/role: {{ printf "%s-%s-%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        vault.hashicorp.com/agent-inject-secret-newrelic: {{ printf "kv/data/%s/newrelic" .Values.vault.auth.department | quote }}
+        {{ printf "vault.hashicorp.com/agent-inject-template-newrelic: |" }}
+          {{ printf "{{- with secret \"kv/data/%s/newrelic\" -}}" .Values.vault.auth.department }}
+          {{ printf "{{- range $k, $v := .Data.data -}}" }}
+          {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "{{ end -}}" }}
+          {{ printf "{{- end -}}" }}
+        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s/%s/shared" .Values.vault.auth.department .Values.vault.auth.team | quote }}
+        {{ printf "vault.hashicorp.com/agent-inject-template-.env.shared: |" }}
+          {{ printf "{{- with secret \"kv/data/%s/%s/shared\" -}}" .Values.vault.auth.department .Values.vault.auth.team }}
+          {{ printf "{{- range $k, $v := .Data.data -}}" }}
+          {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "{{ end -}}" }}
+          {{ printf "{{- end -}}" }}
+        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s/%s/%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        {{ printf "vault.hashicorp.com/agent-inject-template-.env: |" }}
+          {{ printf "{{- with secret \"kv/data/%s/%s/%s\" -}}" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env }}
+          {{ printf "{{- range $k, $v := .Data.data -}}" }}
+          {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "{{ end -}}" }}
+          {{ printf "{{- end -}}" }}
+        {{- range .Values.vault.secrets -}}
+        {{- printf "vault.hashicorp.com/agent-inject-secret-%s: \"%s\"" .name .path | nindent 8 }}
+        {{- printf "vault.hashicorp.com/agent-inject-template-%s: |" .name | nindent 8 }}
+          {{ printf "{{- with secret \"%s\" -}}" .path }}
+          {{ .value | default (printf "{{- range $k, $v := .Data.data -}}\n   export {{ $k }}=\"{{ $v }}\"\n{{ end -}}") | indent 10 | trim  }}
+          {{ printf "{{- end -}}" }}
+        {{- end }}
+        {{- end }}
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+        {{- if .Values.podLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.podLabels "context" $ ) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.fluidtruck.enabled }}
+        {{- include "common.labels.fluidtruck" . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.github.enabled }}
+        {{- include "common.labels.github" . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- include "dotnet.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.affinity }}
+      affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.affinity "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.nodeSelector "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" ( dict "value" .Values.tolerations "context" $ ) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- end }}
+      serviceAccountName: {{ template "dotnet.serviceAccountName" . }}
+      containers:
+        - name: app
+          image: {{ template "dotnet.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          env:
+            {{- if eq .Values.fluidtruck.env "dev" }}
+            - name: NEW_RELIC_APP_NAME
+              value: {{ printf "%s-%s" .Values.fluidtruck.app .Release.Name | quote }}
+            {{- else }}
+            - name: NEW_RELIC_APP_NAME
+              value: {{ printf "%s-%s" .Values.fluidtruck.app .Values.fluidtruck.env | quote }}
+            {{- end }}
+            {{- if and .Values.fluidtruck.env (not .Values.envVars.ENV) }}
+            - name: ENV
+              value: {{ .Values.fluidtruck.env }}
+            {{- end }}
+            {{- range $key, $value := .Values.envVars }}
+            - name: {{ $key }}
+              {{- if or (typeIs "string" $value) (typeIs "float64" $value) (typeIs "bool" $value) }}
+              value: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) | quote }}
+              {{- else }}
+              {{- include "common.tplvalues.render" ( dict "value" $value "context" $ ) | nindent 14 }}
+              {{- end }}
+            {{- end }}
+          envFrom:
+            {{- if .Values.envVarsCM }}
+            {{- if kindIs "string" .Values.envVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" ( dict "value" .Values.envVarsCM "context" $ ) }}
+            {{- else }}
+            {{- range $value := .Values.envVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- if .Values.envVarsSecret }}
+            {{- if kindIs "string" .Values.envVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" ( dict "value" .Values.envVarsSecret "context" $ ) }}
+            {{- else }}
+            {{- range $value := .Values.envVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.applicationPort | int }}
+            {{- range $key, $value := .Values.extraApplicationPorts }}
+            - name: {{ $key }}
+              containerPort: {{ $value | int }}
+            {{- end }}
+          {{- if .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml .Values.extraVolumeMounts | trim | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.livenessProbe.port | default "http" }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.readinessProbe.port | default "http" }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.lifecycle }}
+          lifecycle: {{- include "common.tplvalues.render" ( dict "value" .Values.lifecycle "context" $ ) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.resources }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+      {{- if .Values.extraVolumes }}
+      volumes:
+        {{ toYaml .Values.extraVolumes | trim | nindent 8 }}
+      {{- end }}
