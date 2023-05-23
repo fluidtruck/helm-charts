@@ -137,7 +137,7 @@ spec:
           env:
             {{- if .Values.redis.enabled }}
             - name: REDIS_HOST
-              value: {{ include "golang.redisHost" . | quote }}
+              value: {{ include "dotnet.redisHost" . | quote }}
             - name: REDIS_PORT
               value: "6379"
             - name: REDIS_PASSWORD

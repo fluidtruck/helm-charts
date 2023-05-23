@@ -2,8 +2,8 @@ apiVersion: v2
 name: dotnet
 description: A chart for Dotnet.
 icon: https://github.com/dotnet/brand/blob/master/logo/dotnet-logo.svg
-version: 1.0.1
-appVersion: 1.0.1
+version: 1.0.2
+appVersion: 1.0.2
 type: application
 keywords:
   - dotnet
