@@ -583,6 +583,28 @@ entries:
     version: 1.0.0
   dotnet:
   - apiVersion: v2
+    appVersion: 1.0.1
+    created: "2023-05-23T15:29:00.365712881Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    description: A chart for Dotnet.
+    digest: 5154ebfd8d6fc879ca61a8f271a21469830bcea1be7fc28b343f5509476da8ef
+    icon: https://github.com/dotnet/brand/blob/master/logo/dotnet-logo.svg
+    keywords:
+    - dotnet
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: dotnet
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/dotnet-1.0.1/dotnet-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2023-05-19T16:46:14.023613454Z"
     dependencies:
@@ -2521,4 +2543,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
     version: 1.0.0
-generated: "2023-05-19T16:46:14.023977154Z"
+generated: "2023-05-23T15:29:00.366091577Z"
