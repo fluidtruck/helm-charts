@@ -2,8 +2,8 @@ apiVersion: v2
 name: dotnet
 description: A chart for Dotnet.
 icon: https://github.com/dotnet/brand/blob/master/logo/dotnet-logo.svg
-version: 1.0.2
-appVersion: 1.0.2
+version: 1.0.3
+appVersion: 1.0.3
 type: application
 keywords:
   - dotnet
@@ -16,3 +16,9 @@ dependencies:
     tags:
       - fluidtruck-common
     version: 1.x.x
+  - name: redis
+    repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+    tags:
+      - redis
+    version: "15.7.6"
+    condition: redis.enabled
