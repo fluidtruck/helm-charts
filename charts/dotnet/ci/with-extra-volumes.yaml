@@ -1,0 +1,7 @@
+extraVolumes:
+  - name: example-name
+    secret:
+      secretName: oh-hai
+extraVolumeMounts:
+  - name: example-name
+    mountPath: /test/path

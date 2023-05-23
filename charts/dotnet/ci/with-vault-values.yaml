@@ -1,6 +1,3 @@
-fluidtruck:
-  env: dev
-
 vault:
   enabled: true
   secrets:

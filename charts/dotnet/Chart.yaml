@@ -1,0 +1,18 @@
+apiVersion: v2
+name: dotnet
+description: A chart for Dotnet.
+icon: https://github.com/dotnet/brand/blob/master/logo/dotnet-logo.svg
+version: 1.0.1
+appVersion: 1.0.1
+type: application
+keywords:
+  - dotnet
+maintainers:
+  - name: devops
+    email: devops@fluidtruck.com
+dependencies:
+  - name: common
+    repository: https://fluidtruck.github.io/helm-charts
+    tags:
+      - fluidtruck-common
+    version: 1.x.x
