@@ -39,15 +39,19 @@ spec:
   ports:
     - name: http
       port: {{ .Values.service.port }}
+      appProtocol: {{ .Values.service.appProtocol }}
       targetPort: http
       {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePort)) }}
       nodePort: {{ .Values.service.nodePort  }}
       {{- else if eq .Values.service.type "ClusterIP" }}
       nodePort: null
       {{- end }}
-    {{- range $key, $value := .Values.extraApplicationPorts }}
-    - name: {{ $key }}
-      port: {{ $value | int }}
-      targetPort: {{ $key }}
+    {{- range .Values.extraApplicationPorts }}
+    - name: {{ .name | quote }}
+      port: {{ .port | int }}
+      targetPort: {{ .name | quote }}
+      {{- if .appProtocol }}
+      appProtocol: {{ .appProtocol | quote }}
+      {{- end }}
     {{- end }}
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
