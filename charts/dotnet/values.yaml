@@ -40,10 +40,16 @@ replicaCount: 1
 ##
 applicationPort: 8000
 
+## Specify the port where you health checks will be running
+##
+healthPort: 8080
+
 ## Enables extra ports for the container
 ##
-extraApplicationPorts: {}
-#   grpc: 8090
+extraApplicationPorts: []
+#   - name: delve
+#     port: 2345
+#     appProtocol: http
 
 ## Additional volumes for app pod
 ##
@@ -95,9 +101,9 @@ podLabels: {}
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 ##
 livenessProbe:
-  enabled: false
+  enabled: true
   path: '/'
-  port: http
+  # port: 8090
   initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 5
@@ -107,7 +113,7 @@ livenessProbe:
 readinessProbe:
   enabled: true
   path: '/'
-  port: http
+  # port: 8090
   initialDelaySeconds: 10
   periodSeconds: 5
   timeoutSeconds: 3
@@ -186,6 +192,7 @@ vault:
   auth:
     department: engineering
     team: devops
+    service: ''
     serviceAccount: soma-sa@project.iam.gserviceaccount.com
   secrets: []
     # The below example will use a standardized template
@@ -225,6 +232,15 @@ service:
   ## HTTP Port
   ##
   port: 80
+
+  ## App Protocol
+  ##
+  ## - http
+  ## - grpc (Default)
+  ##
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#application-protocol
+  ##
+  appProtocol: grpc
 
   ## clusterIP: ""
   ## loadBalancerIP for the Node Service (optional, cloud specific)
@@ -281,6 +297,24 @@ hpa:
   ## HPA annotations done as key:value pairs
   ##
   annotations: {}
+
+## Pod Disruption Budget
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+##
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1
+
+## Configure the redis service
+## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+##
+redis:
+  enabled: false
+  wait: false
+  architecture: standalone
+  auth:
+    password: redis
 
 ## Configure the service account
 ##

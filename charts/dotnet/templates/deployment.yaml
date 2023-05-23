@@ -44,7 +44,7 @@ spec:
         vault.hashicorp.com/auth-type: "gcp"
         vault.hashicorp.com/auth-config-type: "iam"
         vault.hashicorp.com/auth-config-service-account: {{ .Values.vault.auth.serviceAccount | quote }}
-        vault.hashicorp.com/role: {{ printf "%s-%s-%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        vault.hashicorp.com/role: {{ include "common.vault.role" ( dict "vault" .Values.vault "env" .Values.fluidtruck.env ) | quote }}
         vault.hashicorp.com/agent-inject-secret-newrelic: {{ printf "kv/data/%s/newrelic" .Values.vault.auth.department | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-newrelic: |" }}
           {{ printf "{{- with secret \"kv/data/%s/newrelic\" -}}" .Values.vault.auth.department }}
@@ -52,18 +52,18 @@ spec:
           {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}
           {{ printf "{{- end -}}" }}
-        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s/%s/shared" .Values.vault.auth.department .Values.vault.auth.team | quote }}
+        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s" ( include "common.vault.path" ( dict "vault" .Values.vault "name" "shared" ) ) | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-.env.shared: |" }}
-          {{ printf "{{- with secret \"kv/data/%s/%s/shared\" -}}" .Values.vault.auth.department .Values.vault.auth.team }}
+          {{ printf "{{- with secret \"kv/data/%s\" -}}" ( include "common.vault.path" ( dict "vault" .Values.vault "name" "shared" ) ) }}
           {{ printf "{{- range $k, $v := .Data.data -}}" }}
-          {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}
           {{ printf "{{- end -}}" }}
-        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s/%s/%s" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env | quote }}
+        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s" ( include "common.vault.path" ( dict "vault" .Values.vault "name" .Values.fluidtruck.env ) ) | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-.env: |" }}
-          {{ printf "{{- with secret \"kv/data/%s/%s/%s\" -}}" .Values.vault.auth.department .Values.vault.auth.team .Values.fluidtruck.env }}
+          {{ printf "{{- with secret \"kv/data/%s\" -}}" ( include "common.vault.path" ( dict "vault" .Values.vault "name" .Values.fluidtruck.env ) ) }}
           {{ printf "{{- range $k, $v := .Data.data -}}" }}
-          {{ printf "{{ $k }}=\"{{ $v }}\"" }}
+          {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}
           {{ printf "{{- end -}}" }}
         {{- range .Values.vault.secrets -}}
@@ -105,6 +105,28 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- end }}
       serviceAccountName: {{ template "dotnet.serviceAccountName" . }}
+      {{- if or (eq "true" (include "dotnet.waitForRedis" .)) }}
+      initContainers:
+        {{- if eq "true" (include "dotnet.waitForRedis" .) }}
+        - name: wait-for-redis
+          image: redis:alpine
+          env:
+            - name: REDIS_HOST
+              value: {{ include "dotnet.redisHost" . | quote }}
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDISCLI_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: redis-password
+          args:
+            - /mnt/redis/wait-for-redis.sh
+          volumeMounts:
+            - name: wait-for-redis
+              mountPath: /mnt/redis
+        {{- end }}
+      {{- end }}
       containers:
         - name: app
           image: {{ template "dotnet.image" . }}
@@ -113,6 +135,17 @@ spec:
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
           env:
+            {{- if .Values.redis.enabled }}
+            - name: REDIS_HOST
+              value: {{ include "golang.redisHost" . | quote }}
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: redis-password
+            {{- end }}
             {{- if eq .Values.fluidtruck.env "dev" }}
             - name: NEW_RELIC_APP_NAME
               value: {{ printf "%s-%s" .Values.fluidtruck.app .Release.Name | quote }}
@@ -158,9 +191,11 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.applicationPort | int }}
-            {{- range $key, $value := .Values.extraApplicationPorts }}
-            - name: {{ $key }}
-              containerPort: {{ $value | int }}
+            - name: health
+              containerPort: {{ .Values.healthPort | int }}
+            {{- range .Values.extraApplicationPorts }}
+            - name: {{ .name | quote }}
+              containerPort: {{ .port | int }}
             {{- end }}
           {{- if .Values.extraVolumeMounts }}
           volumeMounts:
@@ -168,9 +203,17 @@ spec:
           {{- end }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
+            {{- if eq .Values.livenessProbe.type "tcp" }}
+            tcpSocket:
+              port: {{ .Values.livenessProbe.port | default "health" }}
+            {{- else if eq .Values.livenessProbe.type "grpc" }}
+            grpc:
+              port: {{ .Values.livenessProbe.port | default "health" }}
+            {{ else }}
             httpGet:
               path: {{ .Values.livenessProbe.path }}
-              port: {{ .Values.livenessProbe.port | default "http" }}
+              port: {{ .Values.livenessProbe.port | default "health" }}
+            {{- end }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -179,9 +222,17 @@ spec:
           {{- end }}
           {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
+            {{- if eq .Values.readinessProbe.type "tcp" }}
+            tcpSocket:
+              port: {{ .Values.readinessProbe.port | default "health" }}
+            {{- else if eq .Values.readinessProbe.type "grpc" }}
+            grpc:
+              port: {{ .Values.readinessProbe.port | default "health" }}
+            {{ else }}
             httpGet:
               path: {{ .Values.readinessProbe.path }}
-              port: {{ .Values.readinessProbe.port | default "http" }}
+              port: {{ .Values.readinessProbe.port | default "health" }}
+            {{- end }}
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
@@ -194,7 +245,13 @@ spec:
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
-      {{- if .Values.extraVolumes }}
+      {{- if or (eq "true" (include "dotnet.waitForRedis" .)) (.Values.extraVolumes) }}
       volumes:
-        {{ toYaml .Values.extraVolumes | trim | nindent 8 }}
+        {{- if or (eq "true" (include "dotnet.waitForRedis" .)) }}
+        - name: wait-for-redis
+          configMap:
+            name: {{ template "common.names.fullname" . }}-wait-for-redis
+            defaultMode: 0777
+        {{- end }}
+        {{- if .Values.extraVolumes }}{{ toYaml .Values.extraVolumes | trim | nindent 8 }}{{ end }}
       {{- end }}
