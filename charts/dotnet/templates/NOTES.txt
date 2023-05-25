@@ -1,3 +1,11 @@
+{{- if .Values.ingress.enabled }}
+{{- $protocol := ternary "https" "http" .Values.ingress.tls.enabled }}
+To access your application using your browser, open the following URL(s)
+
+  {{ $protocol }}://{{ include "dotnet.ingressHostname" . }}
+
+{{- end }}
+
 To access your application using kubectl port forwarding, use the following command:
 
   kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} 8000:{{ .Values.service.port }}
