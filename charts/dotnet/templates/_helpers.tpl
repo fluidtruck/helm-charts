@@ -57,3 +57,25 @@ Usage:
 {{- define "dotnet.redisHost" -}}
 {{- printf "%s-redis-master.%s.svc.cluster.local" .Release.Name .Release.Namespace -}}
 {{- end -}}
+
+{{/*
+Print root hostname to be used for the ingress and TLS certificate.
+Usage:
+{{ include "dotnet.ingressRootHostname" . }}
+*/}}
+{{- define "dotnet.ingressRootHostname" -}}
+{{- .Values.ingress.domain -}}
+{{- end -}}
+
+{{/*
+Print FQDN hostname to be used for the ingress.
+Usage:
+{{ include "dotnet.ingressHostname" . }}
+*/}}
+{{- define "dotnet.ingressHostname" -}}
+{{- if .Values.ingress.devMode -}}
+{{- printf "%s.%s" .Release.Name (include "dotnet.ingressRootHostname" .) -}}
+{{- else -}}
+{{- include "dotnet.ingressRootHostname" . -}}
+{{- end }}
+{{- end -}}
