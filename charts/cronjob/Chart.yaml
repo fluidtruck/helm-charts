@@ -2,8 +2,8 @@ apiVersion: v2
 name: cronjob
 description: A chart for CronJobs.
 icon: https://contino.github.io/intro-k8/images/kubernetes/cronjob.png
-version: 2.1.0
-appVersion: 2.1.0
+version: 2.2.0
+appVersion: 2.2.0
 type: application
 keywords:
   - cronjob
@@ -26,5 +26,5 @@ dependencies:
     repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
     tags:
       - redis
-    version: "15.7.6"
+    version: "17.15.6"
     condition: redis.enabled
