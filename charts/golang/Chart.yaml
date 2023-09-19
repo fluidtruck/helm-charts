@@ -2,8 +2,8 @@ apiVersion: v2
 name: golang
 description: A chart for Golang.
 icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
-version: 9.2.4
-appVersion: 9.2.4
+version: 9.3.0
+appVersion: 9.3.0
 type: application
 keywords:
   - go
@@ -26,5 +26,5 @@ dependencies:
     repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
     tags:
       - redis
-    version: "15.7.6"
+    version: "17.15.6"
     condition: redis.enabled
