@@ -1,3 +1,0 @@
-extraApplicationPorts:
-  - name: delve
-    port: 2345

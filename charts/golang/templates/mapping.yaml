@@ -3,26 +3,11 @@ apiVersion: getambassador.io/v3alpha1
 kind: Mapping
 metadata:
   name: {{ .Values.gateway.hostname | replace "." "-" | trunc 63 |  }}-{{ .Values.gateway.prefix | default .Release.Name }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.commonLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.fluidtruck.enabled }}
-    {{- include "common.labels.fluidtruck" . | nindent 4 }}
-    {{- end }}
-    {{- if .Values.github.enabled }}
-    {{- include "common.labels.github" . | nindent 4 }}
-    {{- end }}
-  {{- if or .Values.gateway.annotations .Values.commonAnnotations .Values.github.enabled }}
-  annotations:
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if or .Values.commonAnnotations .Values.gateway.annotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
     {{- if .Values.gateway.annotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.gateway.annotations "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.commonAnnotations }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.github.enabled }}
-    {{- include "common.annotations.github" . | nindent 4 }}
     {{- end }}
   {{- end }}
 spec:

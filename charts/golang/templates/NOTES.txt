@@ -1,17 +1,9 @@
-{{- if .Values.ingress.enabled }}
-{{- $protocol := ternary "https" "http" .Values.ingress.tls.enabled }}
-To access your application using your browser, open the following URL(s)
-
-  {{ $protocol }}://{{ include "golang.ingressHostname" . }}
-
-{{- end }}
-
 To access your application using kubectl port forwarding, use the following command:
 
-  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} 8090:{{ .Values.service.port }}
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ template "common.names.fullname" . }} {{ .Values.applicationPort }}:80
 
 Then access your application using your browser, open the following URL:
 
-  http://127.0.0.1:8090
+  http://127.0.0.1:{{ .Values.applicationPort }}
 
 {{- include "golang.validateValues" . }}

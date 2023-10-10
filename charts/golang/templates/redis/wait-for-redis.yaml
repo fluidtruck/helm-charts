@@ -3,16 +3,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "common.names.fullname" . }}-wait-for-redis
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.commonLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.fluidtruck.enabled }}
-    {{- include "common.labels.fluidtruck" . | nindent 4 }}
-    {{- end }}
-    {{- if .Values.github.enabled }}
-    {{- include "common.labels.github" . | nindent 4 }}
-    {{- end }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if or .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 data:
   wait-for-redis.sh: |
     #/bin/sh

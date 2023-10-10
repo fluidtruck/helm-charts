@@ -1,6 +1,0 @@
-ingress:
-  enabled: true
-  domain: stage.fluidtruck.io
-  tls:
-    enabled: true
-    issuer: "testing"

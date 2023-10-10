@@ -1,29 +1,11 @@
 {{- $dbHost := include "golang.postgresqlHost" . -}}
-apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "common.names.fullname" . }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.commonLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.fluidtruck.enabled }}
-    {{- include "common.labels.fluidtruck" . | nindent 4 }}
-    {{- end }}
-    {{- if .Values.github.enabled }}
-    {{- include "common.labels.github" . | nindent 4 }}
-    {{- end }}
-  {{- if or .Values.commonAnnotations .Values.github.enabled .Values.doppler.enabled }}
-  annotations:
-    {{- if .Values.commonAnnotations }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.github.enabled }}
-    {{- include "common.annotations.github" . | nindent 4 }}
-    {{- end }}
-    {{- if .Values.doppler.enabled }}
-    secrets.doppler.com/reload: {{ .Values.doppler.reload | quote }}
-    {{- end }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if or .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 spec:
   selector:
@@ -36,60 +18,30 @@ spec:
     metadata:
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
-        {{- if .Values.podAnnotations }}
-        {{- include "common.tplvalues.render" ( dict "value" .Values.podAnnotations "context" $ ) | nindent 8 }}
-        {{- end }}
-        {{- if .Values.github.enabled }}
-        {{- include "common.annotations.github" . | nindent 8 }}
-        {{- end }}
         {{- if .Values.vault.enabled }}
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/agent-inject-status: "update"
         vault.hashicorp.com/auth-type: "gcp"
         vault.hashicorp.com/auth-config-type: "iam"
-        vault.hashicorp.com/auth-config-service-account: {{ .Values.vault.auth.serviceAccount | quote }}
-        vault.hashicorp.com/role: {{ include "common.vault.role" ( dict "vault" .Values.vault "env" .Values.fluidtruck.env ) | quote }}
-        vault.hashicorp.com/agent-inject-secret-newrelic: {{ printf "kv/data/%s/newrelic" .Values.vault.auth.department | quote }}
-        {{ printf "vault.hashicorp.com/agent-inject-template-newrelic: |" }}
-          {{ printf "{{- with secret \"kv/data/%s/newrelic\" -}}" .Values.vault.auth.department }}
-          {{ printf "{{- range $k, $v := .Data.data -}}" }}
-          {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
-          {{ printf "{{ end -}}" }}
-          {{ printf "{{- end -}}" }}
-        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s" ( include "common.vault.path" ( dict "vault" .Values.vault "name" "shared" ) ) | quote }}
+        vault.hashicorp.com/auth-config-service-account: {{ .Values.vault.serviceAccount | quote }}
+        vault.hashicorp.com/role: {{ printf "%s-%s-%s" .Values.vault.department .Values.vault.team .Values.env | quote }}
+        vault.hashicorp.com/agent-inject-secret-.env.shared: {{ printf "kv/data/%s/%s/shared" .Values.vault.department .Values.vault.team | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-.env.shared: |" }}
-          {{ printf "{{- with secret \"kv/data/%s\" -}}" ( include "common.vault.path" ( dict "vault" .Values.vault "name" "shared" ) ) }}
+          {{ printf "{{- with secret \"kv/data/%s/%s/shared\" -}}" .Values.vault.department .Values.vault.team }}
           {{ printf "{{- range $k, $v := .Data.data -}}" }}
           {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}
           {{ printf "{{- end -}}" }}
-        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s" ( include "common.vault.path" ( dict "vault" .Values.vault "name" .Values.fluidtruck.env ) ) | quote }}
+        vault.hashicorp.com/agent-inject-secret-.env: {{ printf "kv/data/%s/%s/%s" .Values.vault.department .Values.vault.team .Values.env | quote }}
         {{ printf "vault.hashicorp.com/agent-inject-template-.env: |" }}
-          {{ printf "{{- with secret \"kv/data/%s\" -}}" ( include "common.vault.path" ( dict "vault" .Values.vault "name" .Values.fluidtruck.env ) ) }}
+          {{ printf "{{- with secret \"kv/data/%s/%s/%s\" -}}" .Values.vault.department .Values.vault.team .Values.env }}
           {{ printf "{{- range $k, $v := .Data.data -}}" }}
           {{ printf "export {{ $k }}=\"{{ $v }}\"" }}
           {{ printf "{{ end -}}" }}
           {{ printf "{{- end -}}" }}
-        {{- range .Values.vault.secrets -}}
-        {{- printf "vault.hashicorp.com/agent-inject-secret-%s: \"%s\"" .name .path | nindent 8 }}
-        {{- printf "vault.hashicorp.com/agent-inject-template-%s: |" .name | nindent 8 }}
-          {{ printf "{{- with secret \"%s\" -}}" .path }}
-          {{ .value | default (printf "{{- range $k, $v := .Data.data -}}\n   export {{ $k }}=\"{{ $v }}\"\n{{ end -}}") | indent 10 | trim  }}
-          {{ printf "{{- end -}}" }}
-        {{- end }}
         {{- end }}
       labels: {{- include "common.labels.standard" . | nindent 8 }}
-        {{- if .Values.podLabels }}
-        {{- include "common.tplvalues.render" ( dict "value" .Values.podLabels "context" $ ) | nindent 8 }}
-        {{- end }}
-        {{- if .Values.fluidtruck.enabled }}
-        {{- include "common.labels.fluidtruck" . | nindent 8 }}
-        {{- end }}
-        {{- if .Values.github.enabled }}
-        {{- include "common.labels.github" . | nindent 8 }}
-        {{- end }}
     spec:
-      {{- include "golang.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.affinity }}
       affinity: {{- include "common.tplvalues.render" ( dict "value" .Values.affinity "context" $ ) | nindent 8 }}
       {{- end }}
@@ -99,15 +51,9 @@ spec:
       {{- if .Values.tolerations }}
       tolerations: {{- include "common.tplvalues.render" ( dict "value" .Values.tolerations "context" $ ) | nindent 8 }}
       {{- end }}
-      {{- if .Values.priorityClassName }}
-      priorityClassName: {{ .Values.priorityClassName | quote }}
-      {{- end }}
-      {{- if .Values.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
-      {{- end }}
-      {{- if .Values.terminationGracePeriodSeconds }}
-      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
-      {{- end }}
+      securityContext:
+        fsGroup: 1001
+      terminationGracePeriodSeconds: 30
       serviceAccountName: {{ template "golang.serviceAccountName" . }}
       {{- if or (eq "true" (include "golang.waitForRedis" .)) (eq "true" (include "golang.waitForPostgresql" .)) }}
       initContainers:
@@ -148,32 +94,12 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-        {{- if .Values.swagger.enabled }}
-        - name: swagger
-          {{- if .Values.swagger.image }}
-          image: {{ include "common.images.image" ( dict "imageRoot" .Values.swagger.image ) }}
-          imagePullPolicy: {{ .Values.swagger.image.pullPolicy | quote }}
-          {{- else }}
-          image: {{ template "golang.image" . }}
-          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-          command:
-            - sh
-            - -c
-            - swagger serve -Fswagger --no-open swagger.json
-          {{- end }}
-          env:
-            - name: PORT
-              value: "8081"
-          ports:
-            - name: swagger
-              containerPort: 8081
-        {{- end }}
         - name: app
-          image: {{ template "golang.image" . }}
+          image: {{- include "common.images.image" (dict "imageRoot" .Values.image) | nindent 12 }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-          {{- if .Values.containerSecurityContext.enabled }}
-          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
-          {{- end }}
+          securityContext:
+            runAsUser: 1001
+            runAsNonRoot: true
           env:
             {{- if .Values.redis.enabled }}
             - name: REDIS_HOST
@@ -205,17 +131,10 @@ spec:
             - name: DB_URL_READ
               value: "$(DB_URL)"
             {{- end }}
-            {{- if eq .Values.fluidtruck.env "dev" }}
             - name: NEW_RELIC_APP_NAME
-              value: {{ printf "%s-%s" .Values.fluidtruck.app .Release.Name | quote }}
-            {{- else }}
-            - name: NEW_RELIC_APP_NAME
-              value: {{ printf "%s-%s" .Values.fluidtruck.app .Values.fluidtruck.env | quote }}
-            {{- end }}
-            {{- if and .Values.fluidtruck.env (not .Values.envVars.ENV) }}
+              value: {{ .Release.Name | quote}}
             - name: ENV
-              value: {{ .Values.fluidtruck.env }}
-            {{- end }}
+              value: {{ .Values.env }}
             {{- range $key, $value := .Values.envVars }}
             - name: {{ $key }}
               {{- if or (typeIs "string" $value) (typeIs "float64" $value) (typeIs "bool" $value) }}
@@ -225,27 +144,6 @@ spec:
               {{- end }}
             {{- end }}
           envFrom:
-            {{- if .Values.envVarsCM }}
-            {{- if kindIs "string" .Values.envVarsCM }}
-            - configMapRef:
-                name: {{ include "common.tplvalues.render" ( dict "value" .Values.envVarsCM "context" $ ) }}
-            {{- else }}
-            {{- range $value := .Values.envVarsCM }}
-            - configMapRef:
-                name: {{ include "common.tplvalues.render" ( dict "value" $value "context" $ ) }}
-            {{- end }}
-            {{- end }}
-            {{- end }}
-            {{- if .Values.doppler.enabled }}
-            - secretRef:
-                name: {{ printf "doppler-%s-shared-secret" .Values.doppler.auth.department }}
-            - secretRef:
-                name: {{ printf "doppler-%s-%s-secret" .Values.doppler.auth.department .Values.fluidtruck.env }}
-            - secretRef:
-                name: {{ printf "doppler-%s-shared-secret" .Values.doppler.auth.team }}
-            - secretRef:
-                name: {{ printf "doppler-%s-%s-secret" .Values.doppler.auth.team .Values.fluidtruck.env }}
-            {{- end }}
             {{- if .Values.envVarsSecret }}
             {{- if kindIs "string" .Values.envVarsSecret }}
             - secretRef:
@@ -262,14 +160,6 @@ spec:
               containerPort: {{ .Values.applicationPort | int }}
             - name: health
               containerPort: {{ .Values.healthPort | int }}
-            {{- range .Values.extraApplicationPorts }}
-            - name: {{ .name | quote }}
-              containerPort: {{ .port | int }}
-            {{- end }}
-          {{- if .Values.extraVolumeMounts }}
-          volumeMounts:
-            {{- toYaml .Values.extraVolumeMounts | trim | nindent 12 }}
-          {{- end }}
           {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
@@ -292,9 +182,6 @@ spec:
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           {{- end }}
-          {{- if .Values.lifecycle }}
-          lifecycle: {{- include "common.tplvalues.render" ( dict "value" .Values.lifecycle "context" $ ) | nindent 12 }}
-          {{- end }}
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
@@ -312,5 +199,4 @@ spec:
             name: {{ template "common.names.fullname" . }}-wait-for-postgresql
             defaultMode: 0777
         {{- end }}
-        {{- if .Values.extraVolumes }}{{ toYaml .Values.extraVolumes | trim | nindent 8 }}{{ end }}
     {{- end }}
