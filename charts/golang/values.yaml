@@ -2,6 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## The environment being installed to.
+##
+env: dev
+
 ## The image version
 ##
 image:
@@ -44,26 +48,6 @@ applicationPort: 8090
 ##
 healthPort: 8080
 
-## Enables extra ports for the container
-##
-extraApplicationPorts: []
-#   - name: delve
-#     port: 2345
-#     appProtocol: http
-
-## Additional volumes for app pod
-##
-extraVolumes: []
-  # - name: example-volume
-  #   secret:
-  #     secretName: mysecret
-
-## Additional volume mounts for app pod
-##
-extraVolumeMounts: []
-  # - name: example-volume
-  #   mountPath: /path/in/container
-
 ## Affinity for pod assignment. Evaluated as a template.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ##
@@ -79,23 +63,13 @@ nodeSelector: {}
 ##
 tolerations: {}
 
-## Add labels to all the deployed resources
+## @param commonLabels Labels to add to all deployed objects
 ##
 commonLabels: {}
 
-## Add annotations to all the deployed resources
+## @param commonAnnotations Annotations to add to all deployed objects
 ##
 commonAnnotations: {}
-
-## Additional pod annotations
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-##
-podAnnotations: {}
-
-## Additional pod labels
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-##
-podLabels: {}
 
 ## Configure extra options for liveness and readiness probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
@@ -120,11 +94,6 @@ readinessProbe:
   failureThreshold: 3
   successThreshold: 1
 
-## The pods' priority.
-## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
-##
-priorityClassName: ""
-
 ## An array to add extra env vars
 ## For example:
 ##
@@ -137,38 +106,9 @@ envVars: {}
   #       name: some-ref
   #       key: redis-password
 
-## ConfigMap with extra environment variables
-##
-envVarsCM:
-
 ## Secret with extra environment variables
 ##
 envVarsSecret:
-
-## SecurityContext configuration
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-##
-containerSecurityContext:
-  enabled: true
-  runAsUser: 1001
-  runAsNonRoot: true
-
-podSecurityContext:
-  enabled: true
-  fsGroup: 1001
-
-## The containers' lifecycle
-## ref: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
-##
-lifecycle: {}
-  # preStop:
-  #   exec:
-  #     command: ["sleep", 30]
-
-## The containers' termination grace period.
-## ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#podspec-v1-core
-##
-terminationGracePeriodSeconds: 30
 
 ## The containers' resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
@@ -189,38 +129,9 @@ resources:
 ##
 vault:
   enabled: false
-  auth:
-    department: engineering
-    team: devops
-    service: ''
-    serviceAccount: soma-sa@project.iam.gserviceaccount.com
-  secrets: []
-    # The below example will use a standardized template
-    # that injects a file formatted in a way that allows
-    # libraries like Viper, or dotenv, to load the file at
-    # runtime.
-    #
-    # - name: env
-    #   path: "devops/go-demo/data/prod/env"
-
-    # The below example shows you how to build your own
-    # template value for the injected Vault file.
-    #
-    # - name: env
-    #   path: "devops/go-demo/data/prod/env"
-    #   value: |-
-    #     {{- range $k, $v := .Data.data -}}
-    #        export {{ $k }}="{{ $v }}"
-    #     {{ end -}}
-
-## Doppler settings for secrets
-##
-doppler:
-  enabled: false
-  reload: false
-  auth:
-    department: engineering
-    team: devops
+  department: engineering
+  team: team-name
+  serviceAccount: soma-sa@some-project.iam.gserviceaccount.com
 
 ## The Deployment update strategy
 ## ref: https://kubernetes.io/docs/reference/kubernetes-api/workloads-resources/deployment-v1/#DeploymentSpec
@@ -234,14 +145,6 @@ strategy:
 ## Service parameters
 ##
 service:
-  ## Service type
-  ##
-  type: ClusterIP
-
-  ## HTTP Port
-  ##
-  port: 80
-
   ## App Protocol
   ##
   ## - http
@@ -251,87 +154,11 @@ service:
   ##
   appProtocol: grpc
 
-  ## clusterIP: ""
-  ## loadBalancerIP for the Node Service (optional, cloud specific)
-  ## ref: http://kubernetes.io/docs/user-guide/services/#type-loadbalancer
-  ##
-
-  ## Control where client requests go, to the same pod or round-robin
-  ## Values: ClientIP or None
-  ## ref: https://kubernetes.io/docs/user-guide/services/
-  ##
-  sessionAffinity: 'None'
-
-  ## Specify the nodePort value for the LoadBalancer and NodePort service types.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
-  ##
-  # nodePort:
-
-  ## Set the LoadBalancer service type to internal only.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
-  ##
-  # loadBalancerIP:
-
-  ## In order to limit which client IP's can access the Network Load Balancer, specify loadBalancerSourceRanges.
-  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support
-  ##
-  # loadBalancerSourceRanges:
-
   ## Provide any additional annotations which may be required. This can be used to
   ## set the LoadBalancer service type to internal only.
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
   ##
   annotations: {}
-
-## Configure the ingress resource that allows you to access the service.
-## ref: http://kubernetes.io/docs/user-guide/ingress/
-##
-ingress:
-  ## Set to true to enable ingress record generation
-  ##
-  enabled: false
-
-  ## Enable to prepend the .Release.Name as a subdomain.
-  ##
-  devMode: false
-
-  ## Set this to the required desired IngressClass. Set to false to use your cluster's default ingress.
-  ##
-  class: ambassador
-
-  ## Set this to the domain you want to use.
-  ##
-  domain: fluidtruck.io
-
-  ## The root path. You may need to set this to '/*' in order to use this with ALB ingress
-  ## controllers.
-  ##
-  path: /
-
-  ## Ingress Path type
-  ##
-  pathType: ImplementationSpecific
-
-  ## Override API Version (automatically detected if not set)
-  ##
-  # apiVersion:
-
-  ## Ingress annotations done as key:value pairs
-  ## For a full list of possible ingress annotations, please see
-  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
-  ##
-  annotations: {}
-
-  ## Configure TLS
-  ##
-  tls:
-    ## Set this to true to enable TLS
-    ##
-    enabled: false
-
-    ## Set this to true in order to add the corresponding annotations for cert-manager
-    ##
-    issuer: "letsencrypt-staging"
 
 ## API Gateway
 ##
@@ -366,11 +193,11 @@ hpa:
 
   ## The maximum number of replicas to maintain
   ##
-  maxReplicas: 50
+  maxReplicas: 5
 
   ## The target CPU utilization percentage
   ##
-  targetCPUUtilizationPercentage: 40
+  targetCPUUtilizationPercentage: 80
 
   ## HPA annotations done as key:value pairs
   ##
@@ -395,7 +222,7 @@ postgresql:
     password: postgresql
     database: postgresql
   image:
-    tag: '14.2.0'
+    tag: 14.9.0-debian-11-r55
 
 ## Configure the redis service
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
@@ -421,36 +248,4 @@ serviceAccount:
   ##
   ## For example, to add a Workload identity binding
   annotations: {}
-    # iam.gke.io/gcp-service-account: example-sa@apps-stage-150c.iam.gserviceaccount.com
-
-## Swagger Configuration
-##
-swagger:
-  ## Set to true to enable Swagger
-  ##
-  enabled: false
-
-  ## Image
-  ##
-  # image:
-  #   registry: docker.io
-  #   repository: ellisio/go-swagger
-  #   tag: "v0.27.0"
-  #   # pullSecrets:
-  #   #   - myRegistryKeySecretName
-
-## FluidTruck labels
-##
-fluidtruck:
-  enabled: false
-  app: ""
-  team: ""
-  env: ""
-
-## GitHub labels and annotations
-##
-github:
-  enabled: false
-  repo: {}
-  pr: {}
-  release: {}
+    # iam.gke.io/gcp-service-account: example-sa@some-project.iam.gserviceaccount.com

@@ -8,7 +8,6 @@ chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
   - bitnami-full=https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
   - fluidtruck=https://fluidtruck.github.io/helm-charts
-helm-extra-args: --timeout 600s
 validate-chart-schema: true
 validate-maintainers: true
 validate-yaml: true

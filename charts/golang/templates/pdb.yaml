@@ -3,27 +3,9 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "common.names.fullname" . }}
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.commonLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.fluidtruck.enabled }}
-    {{- include "common.labels.fluidtruck" . | nindent 4 }}
-    {{- end }}
-    {{- if .Values.github.enabled }}
-    {{- include "common.labels.github" . | nindent 4 }}
-    {{- end }}
-  {{- if or .Values.commonAnnotations .Values.github.enabled .Values.doppler.enabled }}
-  annotations:
-    {{- if .Values.commonAnnotations }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.github.enabled }}
-    {{- include "common.annotations.github" . | nindent 4 }}
-    {{- end }}
-    {{- if .Values.doppler.enabled }}
-    secrets.doppler.com/reload: {{ .Values.doppler.reload | quote }}
-    {{- end }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 spec:
   selector:

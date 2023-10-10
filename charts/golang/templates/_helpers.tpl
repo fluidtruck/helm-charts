@@ -1,11 +1,4 @@
 {{/*
-Return the proper image name
-*/}}
-{{- define "golang.image" -}}
-{{- include "common.images.image" (dict "imageRoot" .Values.image) -}}
-{{- end -}}
-
-{{/*
 Return the service account name
 */}}
 {{- define "golang.serviceAccountName" -}}
@@ -14,13 +7,6 @@ Return the service account name
 {{- else -}}
   {{- default "default" .Values.serviceAccount.name -}}
 {{- end -}}
-{{- end -}}
-
-{{/*
-Return the proper Docker Image Registry Secret Names
-*/}}
-{{- define "golang.imagePullSecrets" -}}
-{{- include "common.images.pullSecrets" (dict "images" (list .Values.image)) -}}
 {{- end -}}
 
 {{/*
@@ -78,26 +64,4 @@ Usage:
 */}}
 {{- define "golang.redisHost" -}}
 {{- printf "%s-redis-master.%s.svc.cluster.local" .Release.Name .Release.Namespace -}}
-{{- end -}}
-
-{{/*
-Print root hostname to be used for the ingress and TLS certificate.
-Usage:
-{{ include "golang.ingressRootHostname" . }}
-*/}}
-{{- define "golang.ingressRootHostname" -}}
-{{- .Values.ingress.domain -}}
-{{- end -}}
-
-{{/*
-Print FQDN hostname to be used for the ingress.
-Usage:
-{{ include "golang.ingressHostname" . }}
-*/}}
-{{- define "golang.ingressHostname" -}}
-{{- if .Values.ingress.devMode -}}
-{{- printf "%s.%s" .Release.Name (include "golang.ingressRootHostname" .) -}}
-{{- else -}}
-{{- include "golang.ingressRootHostname" . -}}
-{{- end }}
 {{- end -}}

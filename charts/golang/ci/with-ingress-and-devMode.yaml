@@ -1,6 +1,0 @@
-ingress:
-  enabled: true
-  devMode: true
-  tls:
-    enabled: true
-    issuer: "testing"

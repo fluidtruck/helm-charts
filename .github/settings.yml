@@ -39,8 +39,6 @@ collaborators:
 teams:
   - name: devops
     permission: admin
-  - name: security
-    permission: admin
 
 branches:
   - name: main
