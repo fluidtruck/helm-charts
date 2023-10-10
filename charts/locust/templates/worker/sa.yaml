@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: {{ template "common.names.fullname" . }}-worker
-  labels: {{- include "common.labels.standard" . | nindent 4 }}
-    app.kubernetes.io/component: worker
-    loadtest: {{ .Values.loadtest.name | quote }}

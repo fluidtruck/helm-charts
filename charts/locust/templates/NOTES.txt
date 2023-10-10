@@ -1,3 +1,0 @@
-Visit the URL of your Locust app:
-
-  http://{{ tpl .Values.master.ingress.hostname . }}

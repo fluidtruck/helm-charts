@@ -1,6 +1,0 @@
-dependencies:
-- name: common
-  repository: https://fluidtruck.github.io/helm-charts
-  version: 1.0.0
-digest: sha256:eb518d01860e27b7c028ef6c2cb5d0daf7197e2d78ab3158b2f4447e8fc7042c
-generated: "2021-07-20T10:50:42.974107-06:00"
