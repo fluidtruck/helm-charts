@@ -192,7 +192,7 @@ spec:
                 {{- if or (typeIs "string" $value) (typeIs "float64" $value) (typeIs "bool" $value) }}
                 value: {{ include "common.tplvalues.render" (dict "value" $value "context" $) | quote }}
                 {{- else }}
-                {{- include "common.tplvalues.render" (dict "value" $value "context" $) | nindent 14 }}
+                {{- include "common.tplvalues.render" (dict "value" $value "context" $) | nindent 16 }}
                 {{- end }}
               {{- end }}
             {{- if or $top.Values.envVarsCM $top.Values.envVarsSecret }}
