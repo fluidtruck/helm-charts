@@ -395,7 +395,9 @@ postgresql:
     password: postgresql
     database: postgresql
   image:
-    tag: '14.2.0'
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: 17.6.0-debian-12-r4
 
 ## Configure the redis service
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
@@ -406,6 +408,10 @@ redis:
   architecture: standalone
   auth:
     password: redis
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/redis
+    tag: 8.2.1-debian-12-r0
 
 ## Configure the service account
 ##
