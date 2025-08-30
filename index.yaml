@@ -774,6 +774,40 @@ entries:
     - https://github.com/fluidtruck/helm-charts/releases/download/golang-10.0.0/golang-10.0.0.tgz
     version: 10.0.0
   - apiVersion: v2
+    appVersion: 9.5.0
+    created: "2025-08-30T05:14:45.943085357Z"
+    dependencies:
+    - name: common
+      repository: https://fluidtruck.github.io/helm-charts
+      tags:
+      - fluidtruck-common
+      version: 1.x.x
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      tags:
+      - postgresql
+      version: 16.7.27
+    - condition: redis.enabled
+      name: redis
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      tags:
+      - redis
+      version: 22.0.7
+    description: A chart for Golang.
+    digest: c37c2b426b67e09ab6051ed2f624c8562f2c6bac195d0b29232dd9a698823b39
+    icon: https://golang.org/lib/godoc/images/go-logo-blue.svg
+    keywords:
+    - go
+    maintainers:
+    - email: devops@fluidtruck.com
+      name: devops
+    name: golang
+    type: application
+    urls:
+    - https://github.com/fluidtruck/helm-charts/releases/download/golang-9.5.0/golang-9.5.0.tgz
+    version: 9.5.0
+  - apiVersion: v2
     appVersion: 9.4.0
     created: "2025-03-26T00:31:08.467277088Z"
     dependencies:
@@ -2757,4 +2791,4 @@ entries:
     urls:
     - https://github.com/fluidtruck/helm-charts/releases/download/python-1.0.0/python-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-26T00:31:08.467845815Z"
+generated: "2025-08-30T05:14:45.943334056Z"
