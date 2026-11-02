@@ -451,6 +451,10 @@ swagger:
   ##
   enabled: false
 
+  ## Override the default Assets URL for the javascript UI bundle
+  ## Requires go-swagger >= v0.36.7
+  # assetsURL: https://unpkg.com/swagger-ui-dist@5.30.0/swagger-ui-bundle.js
+
   ## Image
   ##
   # image:
