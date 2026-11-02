@@ -25,6 +25,11 @@ jobs:
       - name: Fetch history
         run: git fetch --prune --unshallow
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.7.0
 
@@ -40,6 +45,11 @@ jobs:
 
       - name: Fetch history
         run: git fetch --prune --unshallow
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.7.0
