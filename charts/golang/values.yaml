@@ -396,13 +396,13 @@ postgresql:
     database: postgresql
   image:
     registry: docker.io
-    repository: bitnami/postgresql
-    tag: 14.2.0-debian-10-r88
+    repository: bitnamilegacy/postgresql
+    tag: 14.2.0
   metrics:
     image:
       registry: docker.io
       repository: bitnamilegacy/postgres-exporter
-      tag: 0.10.1-debian-10-r103
+      tag: 0.10.1
 
 ## Configure the redis service
 ## ref: https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
@@ -420,13 +420,13 @@ redis:
   sentinel:
     image:
       registry: docker.io
-      repository: bitnami/redis-sentinel
+      repository: bitnamilegacy/redis-sentinel
       tag: 6.2.9-debian-11-r0
   metrics:
     image:
       registry: docker.io
-      repository: bitnami/redis-exporter
-      tag: 1.33.0-debian-10-r9
+      repository: bitnamilegacy/redis-exporter
+      tag: 1.33.0
 
 ## Configure the service account
 ##
@@ -450,6 +450,10 @@ swagger:
   ## Set to true to enable Swagger
   ##
   enabled: false
+
+  ## Override the default Assets URL for the javascript UI bundle
+  ## Requires go-swagger >= v0.36.7
+  # assetsURL: https://unpkg.com/swagger-ui-dist@5.30.0/swagger-ui-bundle.js
 
   ## Image
   ##

@@ -159,7 +159,7 @@ spec:
           command:
             - sh
             - -c
-            - swagger serve -Fswagger --no-open swagger.json
+            - swagger serve -Fswagger --no-open {{ if .Values.swagger.assetsURL -}}--assets-url={{ .Values.swagger.assetsURL | quote }}{{- end}} swagger.json
           {{- end }}
           env:
             - name: PORT
